@@ -158,3 +158,18 @@
 #expmodal .ebtns{display:flex;justify-content:center}
 #expmodal .ebtns .saveimg{width:auto;padding:8px 26px;margin:0}
 #expmodal .mnote{font-size:11px;color:var(--ink-faint);text-align:center;margin:0}
+
+/* 排版打磨 2026-07-07 */
+.bar{row-gap:8px}
+.bar2{margin-top:2px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;background:rgba(17,22,29,.55)}
+.barlabel{font-family:var(--font-mono);font-size:10px;letter-spacing:.15em;color:var(--ink-faint);margin-right:2px}
+.tog:hover{border-color:var(--amber)}
+.sbtn:hover{border-color:#E5484D;color:var(--ink)}
+.fbtn:hover{border-color:var(--amber);color:var(--ink)}
+.legcard summary{cursor:pointer;list-style:none;user-select:none}
+.legcard summary::-webkit-details-marker{display:none}
+.legcard summary h3{margin:0;display:flex;align-items:center}
+.legcard summary .fold{margin-left:auto;font-size:10px;color:var(--ink-faint);font-weight:500}
+.legcard details[open] .leg{margin-top:9px}
+.legcard details:not([open]) summary .fold::after{content:""}
+@media (max-width:860px){.side{flex-direction:column}.card{min-width:0}}

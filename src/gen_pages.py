@@ -46,8 +46,9 @@ FLOOR_BTNS = '''    <button class="fbtn" data-f="R">屋顶<span class="en">ROOF<
     <span class="fnote" id="fnote"></span>
     <span class="spacer"></span>'''
 
-LEGEND = '''      <div class="card">
-        <h3>图例 <span class="mono">LEGEND</span></h3>
+LEGEND = '''      <div class="card legcard">
+        <details open>
+        <summary><h3>图例 <span class="mono">LEGEND</span><span class="fold">收起 ▾</span></h3></summary>
         <div class="leg">
           <div class="row"><span class="sw" style="background:rgba(255,179,0,.9);border-color:#8a6000"></span>橙板 = 可破坏墙（一格=一块板）</div>
           <div class="row"><span class="sw" style="background:rgba(178,196,214,.96);border-color:#f0f7ff"></span>银板 = 你放的强化板（点击放/取消）</div>
@@ -61,6 +62,7 @@ LEGEND = '''      <div class="card">
           <div class="row"><span class="sw" style="background:repeating-linear-gradient(90deg,#fff 0 2px,#333 2px 4px);border-color:#999"></span>墙上条纹 = 窗户 · 缺口 = 门</div>
           <div class="row"><span class="sw bomb" style="width:16px;height:16px;font-size:9px">A</span>下包点(A/B)</div>
         </div>
+        </details>
       </div>'''
 
 VIEWER_STAGE = '''    <div class="viewer" id="viewer">
@@ -70,8 +72,9 @@ VIEWER_STAGE = '''    <div class="viewer" id="viewer">
       <div class="hint" id="modehint">滚轮缩放 · 拖动平移 · 高亮 = 可破坏墙/天窗等（见右侧图例）</div>
     </div>'''
 
-def page(title, ey, h1, small, headright, bar_extra, side_pre, side_post, disc, foot1, foot2, tail, js, ref_js="", page_data=None):
+def page(title, ey, h1, small, headright, bar_extra, side_pre, side_post, disc, foot1, foot2, tail, js, ref_js="", page_data=None, bar2=""):
     page_data = page_data if page_data is not None else data
+    bar2_html = ('  <div class="bar bar2">\n' + bar2 + '\n  </div>\n') if bar2 else ''
     return '''<meta charset="utf-8">
 <title>''' + title + '''</title>
 <style>
@@ -93,6 +96,7 @@ def page(title, ey, h1, small, headright, bar_extra, side_pre, side_post, disc, 
 ''' + FLOOR_BTNS + '''
 ''' + bar_extra + '''
   </div>
+''' + bar2_html + '''
 
   <div class="stage-wrap">
 ''' + VIEWER_STAGE + '''
@@ -133,25 +137,26 @@ VIEWER_TOOLS = '''      <div class="card" id="toolcard" style="border-color:rgba
 
 # ---------- 正式版 ----------
 viewer_html = page(
-    title="彩虹六号 · 会所全楼层示意图（彩色格子·放大不糊）",
-    ey="R6S · CLUBHOUSE SCHEMATIC · GRID",
-    h1="会所 · 全楼层示意图",
-    small="现役官方俯视图 · 高亮可破坏墙/天窗/软地板/摄像头 · 滚轮缩放",
+    title="彩虹六号 · 会所防守装修规划器",
+    ey="R6S · CLUBHOUSE · SETUP PLANNER",
+    h1="会所 · 防守装修规划器",
+    small="现役官方地图 · 强化墙 / 打洞 / 全防守道具摆放 · 一键导出方案图",
     headright='<span class="verchip">实地校准 · <b>Y11S2</b></span>',
     bar_extra='''    <span class="sitegrp">包点
       <button class="sbtn on" data-site="all">全部</button>
-      <button class="sbtn" data-site="1">①卧室健身</button>
-      <button class="sbtn" data-site="2">②金库监控</button>
-      <button class="sbtn" data-site="3">③酒吧贮藏</button>
-      <button class="sbtn" data-site="4">④教堂军械</button>
-    </span>
+      <button class="sbtn" data-site="1">① 卧室·健身</button>
+      <button class="sbtn" data-site="2">② 金库·监控</button>
+      <button class="sbtn" data-site="3">③ 酒吧·贮藏</button>
+      <button class="sbtn" data-site="4">④ 教堂·军械</button>
+    </span>''',
+    bar2='''    <span class="barlabel">显示</span>
     <button class="tog on" id="tBase"><span class="dot"></span>原图底图</button>
     <button class="tog on" id="tMarks"><span class="dot"></span>破坏/摄像头标注</button>
-    <button class="tog" id="tFills"><span class="dot"></span>房间色块</button>
-    <button class="tog on" id="tLabels"><span class="dot"></span>房间名</button>''',
+    <button class="tog on" id="tLabels"><span class="dot"></span>房间名</button>
+    <button class="tog" id="tFills"><span class="dot"></span>房间色块</button>''',
     side_pre=VIEWER_TOOLS, side_post="",
     disc='<b>说明：</b>底图=<b>现役版本官方俯视图</b>；高亮标注取自 r6calls.com 现役数据，可破坏墙已按游戏拆成<b>单块板</b>。<b>自定义装修：点橙墙板/绿天窗放强化板（共10块）；选洞型给软墙打洞（过人/对枪/修脚/翻越）；选道具点地图摆位</b>。所有摆放自动保存在本机。纯白墙=不可破坏；条纹=窗、缺口=门。板块数按长度推算，不对随时说。' ,
-    foot1="会所全楼层地图 · 现役官方俯视图 + 可破坏墙/天窗/摄像头标注",
+    foot1="会所防守装修规划器 · 现役官方地图 · 强化/打洞/道具/方案导出",
     foot2="LIVE MAP · DESTRUCTIBLES HIGHLIGHTED",
     tail='''<div id="expmodal"><div class="ebox">
   <div class="eh"><b>📸 装修图已生成</b><button class="x" id="eclose">×</button></div>
