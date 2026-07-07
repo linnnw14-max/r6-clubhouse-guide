@@ -23,7 +23,7 @@
   .tog{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:7px 12px;display:inline-flex;align-items:center;gap:7px}
   .tog .dot{width:9px;height:9px;border-radius:50%;background:var(--ink-faint)}.tog.on{border-color:var(--amber)}.tog.on .dot{background:var(--amber)}
 
-  .stage-wrap{display:grid;grid-template-columns:1fr 258px;gap:14px;align-items:start}
+  .stage-wrap{display:grid;grid-template-columns:1fr 278px;gap:14px;align-items:start}
   .viewer{position:relative;width:100%;height:min(78vh,860px);background:#0b0f14;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh);cursor:grab;touch-action:none;user-select:none}
   .viewer.grabbing{cursor:grabbing}
   body.painting .viewer{cursor:crosshair}
@@ -191,6 +191,18 @@
 .side::-webkit-scrollbar{width:6px}
 .side::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
 @media (max-width:860px){.side{max-height:none;overflow:visible}}
+
+/* 防守装修卡字号调大（2026-07-07 用户反馈看不清） */
+#toolcard .armrow{font-size:13.5px;padding:8px 10px}
+#toolcard .gsec{font-size:11px}
+#toolcard .gdet summary{font-size:11px;letter-spacing:.08em;padding:8px 2px}
+#toolcard .gbtn{font-size:12.5px;padding:7px 8px;gap:6px;border-radius:8px}
+#toolcard .gbtn .gi{font-size:14px}
+#toolcard .gbtn .gc{font-size:11px}
+#toolcard .gpal{gap:5px}
+#toolcard .note2f{font-size:12px;line-height:1.55}
+#toolcard .saveimg{font-size:13.5px;padding:9px 0}
+#toolcard .resetall{font-size:12.5px}
 
 </style>
 
