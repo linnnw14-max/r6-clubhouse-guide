@@ -121,8 +121,18 @@ function buildHpal(){
 }
 function buildGpal(){
   var box=document.getElementById("gpal");box.innerHTML="";
+  var grid=null,first=true;
   GADGETS.forEach(function(g){
-    if(g.sec){var h=document.createElement("div");h.className="gsec";h.textContent=g.sec;box.appendChild(h);return;}
+    if(g.sec){
+      var det=document.createElement("details");det.className="gdet";
+      if(first){det.open=true;first=false;}
+      var sum=document.createElement("summary");
+      sum.innerHTML='<span>'+g.sec+'</span><span class="garr"></span>';
+      det.appendChild(sum);
+      grid=document.createElement("div");grid.className="gpal";det.appendChild(grid);
+      box.appendChild(det);
+      return;
+    }
     var b=document.createElement("div");b.className="gbtn";b.id="gb_"+g.id;
     b.innerHTML='<span class="gi">'+g.i+'</span><span class="gn">'+g.n+'</span><span class="gc"></span>';
     b.addEventListener("click",function(){
@@ -133,7 +143,7 @@ function buildGpal(){
       }
       updateTools(false);
     });
-    box.appendChild(b);
+    grid.appendChild(b);
   });
 }
 var viewer=document.getElementById("viewer"),canvas=document.getElementById("canvas"),

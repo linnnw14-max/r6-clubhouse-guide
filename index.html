@@ -177,6 +177,21 @@
 .legcard details:not([open]) summary .fold::after{content:""}
 @media (max-width:860px){.side{flex-direction:column}.card{min-width:0}}
 
+/* 道具分组折叠 + 侧栏限高 */
+.gdet{border-bottom:1px dashed var(--line)}
+.gdet summary{cursor:pointer;list-style:none;user-select:none;display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-faint);padding:6px 2px}
+.gdet summary::-webkit-details-marker{display:none}
+.gdet summary:hover{color:var(--ink-dim)}
+.gdet .garr::before{content:"▸ 展开"}
+.gdet[open] .garr::before{content:"▾"}
+.gdet .gpal{margin:0 0 7px}
+.legcard .fold::before{content:"▸ 展开"}
+.legcard details[open] .fold::before{content:"▾ 收起"}
+.side{max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.side::-webkit-scrollbar{width:6px}
+.side::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+@media (max-width:860px){.side{max-height:none;overflow:visible}}
+
 </style>
 
 <div class="wrap">
@@ -228,14 +243,14 @@
         <div class="armrow" id="armrow"><span>🛡 强化板（点墙板/天窗）</span><span class="armn-wrap">剩 <b id="armn">10</b>/10</span></div>
         <div class="gsec" style="margin-top:6px">打洞（选类型后点橙色墙板）</div>
         <div class="gpal" id="hpal"></div>
-        <div class="gpal" id="gpal"></div>
+        <div id="gpal"></div>
         <p class="note2f">选中道具后<b>点地图放置</b>；点已放的图标=移除；数量为各干员自带配额。</p>
         <button class="saveimg" id="saveImg">📸 保存成图（当前楼层）</button>
         <button class="resetall" id="armClear">清空全部装修</button>
       </div>
       <div class="card legcard">
-        <details open>
-        <summary><h3>图例 <span class="mono">LEGEND</span><span class="fold">收起 ▾</span></h3></summary>
+        <details>
+        <summary><h3>图例 <span class="mono">LEGEND</span><span class="fold"></span></h3></summary>
         <div class="leg">
           <div class="row"><span class="sw" style="background:rgba(255,179,0,.9);border-color:#8a6000"></span>橙板 = 可破坏墙（一格=一块板）</div>
           <div class="row"><span class="sw" style="background:rgba(178,196,214,.96);border-color:#f0f7ff"></span>银板 = 你放的强化板（点击放/取消）</div>
@@ -395,8 +410,18 @@ function buildHpal(){
 }
 function buildGpal(){
   var box=document.getElementById("gpal");box.innerHTML="";
+  var grid=null,first=true;
   GADGETS.forEach(function(g){
-    if(g.sec){var h=document.createElement("div");h.className="gsec";h.textContent=g.sec;box.appendChild(h);return;}
+    if(g.sec){
+      var det=document.createElement("details");det.className="gdet";
+      if(first){det.open=true;first=false;}
+      var sum=document.createElement("summary");
+      sum.innerHTML='<span>'+g.sec+'</span><span class="garr"></span>';
+      det.appendChild(sum);
+      grid=document.createElement("div");grid.className="gpal";det.appendChild(grid);
+      box.appendChild(det);
+      return;
+    }
     var b=document.createElement("div");b.className="gbtn";b.id="gb_"+g.id;
     b.innerHTML='<span class="gi">'+g.i+'</span><span class="gn">'+g.n+'</span><span class="gc"></span>';
     b.addEventListener("click",function(){
@@ -407,7 +432,7 @@ function buildGpal(){
       }
       updateTools(false);
     });
-    box.appendChild(b);
+    grid.appendChild(b);
   });
 }
 var viewer=document.getElementById("viewer"),canvas=document.getElementById("canvas"),

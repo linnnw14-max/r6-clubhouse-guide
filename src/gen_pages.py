@@ -47,8 +47,8 @@ FLOOR_BTNS = '''    <button class="fbtn" data-f="R">屋顶<span class="en">ROOF<
     <span class="spacer"></span>'''
 
 LEGEND = '''      <div class="card legcard">
-        <details open>
-        <summary><h3>图例 <span class="mono">LEGEND</span><span class="fold">收起 ▾</span></h3></summary>
+        <details>
+        <summary><h3>图例 <span class="mono">LEGEND</span><span class="fold"></span></h3></summary>
         <div class="leg">
           <div class="row"><span class="sw" style="background:rgba(255,179,0,.9);border-color:#8a6000"></span>橙板 = 可破坏墙（一格=一块板）</div>
           <div class="row"><span class="sw" style="background:rgba(178,196,214,.96);border-color:#f0f7ff"></span>银板 = 你放的强化板（点击放/取消）</div>
@@ -128,7 +128,7 @@ VIEWER_TOOLS = '''      <div class="card" id="toolcard" style="border-color:rgba
         <div class="armrow" id="armrow"><span>🛡 强化板（点墙板/天窗）</span><span class="armn-wrap">剩 <b id="armn">10</b>/10</span></div>
         <div class="gsec" style="margin-top:6px">打洞（选类型后点橙色墙板）</div>
         <div class="gpal" id="hpal"></div>
-        <div class="gpal" id="gpal"></div>
+        <div id="gpal"></div>
         <p class="note2f">选中道具后<b>点地图放置</b>；点已放的图标=移除；数量为各干员自带配额。</p>
         <button class="saveimg" id="saveImg">📸 保存成图（当前楼层）</button>
         <button class="resetall" id="armClear">清空全部装修</button>

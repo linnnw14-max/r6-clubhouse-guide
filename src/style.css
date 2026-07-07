@@ -173,3 +173,18 @@
 .legcard details[open] .leg{margin-top:9px}
 .legcard details:not([open]) summary .fold::after{content:""}
 @media (max-width:860px){.side{flex-direction:column}.card{min-width:0}}
+
+/* 道具分组折叠 + 侧栏限高 */
+.gdet{border-bottom:1px dashed var(--line)}
+.gdet summary{cursor:pointer;list-style:none;user-select:none;display:flex;align-items:center;justify-content:space-between;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-faint);padding:6px 2px}
+.gdet summary::-webkit-details-marker{display:none}
+.gdet summary:hover{color:var(--ink-dim)}
+.gdet .garr::before{content:"▸ 展开"}
+.gdet[open] .garr::before{content:"▾"}
+.gdet .gpal{margin:0 0 7px}
+.legcard .fold::before{content:"▸ 展开"}
+.legcard details[open] .fold::before{content:"▾ 收起"}
+.side{max-height:calc(100vh - 24px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}
+.side::-webkit-scrollbar{width:6px}
+.side::-webkit-scrollbar-thumb{background:var(--line2);border-radius:3px}
+@media (max-width:860px){.side{max-height:none;overflow:visible}}
