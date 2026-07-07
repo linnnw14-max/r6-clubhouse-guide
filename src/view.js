@@ -418,67 +418,156 @@ document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(selGad||se
 
 /* ---------- 一键保存成图（当前楼层 + 所有装修/标注，所见即所得） ---------- */
 var FNAME={"R":"屋顶","2":"二楼","1":"一楼","B":"地下室"};
+function floorStats(f){
+  var a=0,h=0,g2=0;
+  Object.keys(reinforced).forEach(function(id){if(id.split(":")[0]===f)a++;});
+  Object.keys(holes).forEach(function(id){if(id.split(":")[0]===f)h++;});
+  gads.forEach(function(gd){if(gd.f===f)g2++;});
+  return {a:a,h:h,g:g2,any:(a+h+g2)>0};
+}
 function exportImage(){
-  var F=FLOORS[floor],bb=F.bbox,pad=24;
-  var x0=Math.max(0,bb.x-pad),y0=Math.max(0,bb.y-pad);
-  var x1=Math.min(MAPW,bb.x+bb.w+pad),y1=Math.min(MAPH,bb.y+bb.h+pad);
-  var w=x1-x0,h=y1-y0,EX=S,FOOT=46;
-  var c=document.createElement("canvas");c.width=w*EX;c.height=h*EX+FOOT*Math.round(EX/1.5);
+  var EX=S,PAD=24,TB=17*EX,FOOT=16*EX;
+  var CJK='"PingFang SC","Microsoft YaHei",sans-serif';
+  /* 参与导出的楼层：从上到下，装修过的 or 当前层 */
+  var list=["R","2","1","B"].filter(function(f){return f===floor||floorStats(f).any;});
+  var crops={};
+  list.forEach(function(f){
+    var bb=FLOORS[f].bbox;
+    var x0=Math.max(0,bb.x-PAD),y0=Math.max(0,bb.y-PAD);
+    crops[f]={x0:x0,y0:y0,w:Math.min(MAPW,bb.x+bb.w+PAD)-x0,h:Math.min(MAPH,bb.y+bb.h+PAD)-y0};
+  });
+  var TW=0,TH=0;
+  list.forEach(function(f){TW=Math.max(TW,crops[f].w*EX);TH+=TB+crops[f].h*EX;});
+  var c=document.createElement("canvas");c.width=TW;c.height=TH+FOOT;
   var g=c.getContext("2d");
   g.fillStyle="#0b0f14";g.fillRect(0,0,c.width,c.height);
-  g.drawImage(cv,x0*S,y0*S,w*S,h*S,0,0,w*EX,h*EX);
-  function T(x,y){return[(x-x0)*EX,(y-y0)*EX];}
-  var CJK='"PingFang SC","Microsoft YaHei",sans-serif';
-  g.textAlign="center";
-  if(showLabels)F.labels.forEach(function(l){
-    var p=T(l.x,l.y);
-    g.shadowColor="rgba(0,0,0,.9)";g.shadowBlur=4*EX/3;
-    g.font="800 "+(13*EX)+"px "+CJK;
-    g.fillStyle=l.k==="obj"?"#F6B45A":l.k==="ext"?"#a9c6e0":"#e6edf4";
-    g.fillText(l.cn,p[0],p[1]);
-    if(l.en){g.font="600 "+(7*EX)+"px Menlo,monospace";g.fillStyle="#8B97A6";g.fillText(l.en.toUpperCase(),p[0],p[1]+9*EX);}
-    if(l.kind){g.font="500 "+(8*EX)+"px "+CJK;g.fillStyle="#63707f";g.fillText(l.kind,p[0],p[1]+(l.en?17:10)*EX);}
-    g.shadowBlur=0;
-  });
-  F.bombs.forEach(function(bm){
-    if(selSite!=="all"&&bm.t.charAt(0)!==selSite)return;
-    var p=T(bm.x,bm.y),r=11*EX;
-    g.shadowColor="rgba(255,60,50,.6)";g.shadowBlur=6*EX/3;
-    roundRect(g,p[0]-r,p[1]-r,r*2,r*2,3.5*EX);
-    var gr=g.createLinearGradient(p[0]-r,p[1]-r,p[0]+r,p[1]+r);
-    gr.addColorStop(0,"#FF5A3C");gr.addColorStop(1,"#E31E2E");
-    g.fillStyle=gr;g.fill();
-    g.shadowBlur=0;g.lineWidth=1.6*EX;g.strokeStyle="#fff";g.stroke();
-    g.font="800 "+(10*EX)+"px Menlo,monospace";g.fillStyle="#fff";g.textBaseline="middle";
-    g.fillText(bm.t,p[0],p[1]+0.5);g.textBaseline="alphabetic";
-  });
-  gads.forEach(function(gd){
-    if(gd.f!==floor)return;
-    var spec=GMAP[gd.g],p=T(gd.x,gd.y),r=9*EX;
-    g.beginPath();g.arc(p[0],p[1],r,0,6.2832);
-    g.fillStyle=spec.c;g.fill();
-    g.lineWidth=1.4*EX;g.strokeStyle="rgba(255,255,255,.7)";g.stroke();
-    g.font=(9.5*EX)+"px "+CJK;g.textBaseline="middle";g.fillStyle="#fff";
-    g.fillText(spec.i,p[0],p[1]+0.5);g.textBaseline="alphabetic";
-  });
-  /* 底部信息条 */
-  var fy=h*EX;
-  g.fillStyle="#11161d";g.fillRect(0,fy,c.width,c.height-fy);
-  g.strokeStyle="#26303c";g.lineWidth=2;g.beginPath();g.moveTo(0,fy+1);g.lineTo(c.width,fy+1);g.stroke();
-  g.textAlign="left";
-  g.font="700 "+(11*EX)+"px "+CJK;g.fillStyle="#C7D0DB";
-  var used=[];if(armUsed())used.push("强化板×"+armUsed());
-  var nh=Object.keys(holes).length;if(nh)used.push("打洞×"+nh);
-  var ng=0;gads.forEach(function(gd){if(gd.f===floor)ng++;});if(gads.length)used.push("道具×"+gads.length);
-  g.fillText("R6 会所 · "+FNAME[floor]+(selSite!=="all"?(" · 包点"+selSite):"")+(used.length?(" · "+used.join(" ")):""),14*EX/3,fy+13*EX);
-  g.font="500 "+(7.5*EX)+"px Menlo,monospace";g.fillStyle="#63707f";
-  g.fillText("linnnw14-max.github.io/r6-clubhouse-guide",14*EX/3,fy+23*EX);
+
+  function drawFloorBlock(f,dy){
+    var cr=crops[f],dx=(TW-cr.w*EX)/2;
+    /* 标题栏 */
+    g.fillStyle="#161B22";g.fillRect(0,dy,TW,TB);
+    g.strokeStyle="#26303c";g.lineWidth=2;
+    g.beginPath();g.moveTo(0,dy+TB-1);g.lineTo(TW,dy+TB-1);g.stroke();
+    var st=floorStats(f),parts=[];
+    if(st.a)parts.push("强化板×"+st.a);if(st.h)parts.push("打洞×"+st.h);if(st.g)parts.push("道具×"+st.g);
+    g.textAlign="left";g.textBaseline="middle";
+    g.font="800 "+(10.5*EX)+"px "+CJK;g.fillStyle="#E8873A";
+    g.fillText(FNAME[f]+(f===floor&&selSite!=="all"?"（包点"+selSite+"）":""),12,dy+TB/2);
+    g.font="600 "+(8.5*EX)+"px "+CJK;g.fillStyle=parts.length?"#C7D0DB":"#63707f";
+    g.fillText(parts.length?parts.join("  "):"（无装修）",TW*0.22,dy+TB/2);
+    g.textBaseline="alphabetic";
+    dy+=TB;
+    /* 地图（2x 底图裁切） */
+    var ref=REFIMGS[f];
+    if(ref&&ref.complete&&ref.naturalWidth>0)
+      g.drawImage(ref,cr.x0*2,cr.y0*2,cr.w*2,cr.h*2,dx,dy,cr.w*EX,cr.h*EX);
+    function T(x,y){return[(x-cr.x0)*EX+dx,(y-cr.y0)*EX+dy];}
+    /* 标注层（强化板/洞/天窗等） */
+    var F=FLOORS[f],mk=F.marks||{};
+    MARKORDER.forEach(function(layer){
+      var quads=mk[layer];if(!quads)return;
+      var stl=MARKSTYLE[layer];
+      quads.forEach(function(q,qi){
+        var rid=(layer==="bw"||layer==="fh")?(f+":"+layer+":"+qi):null;
+        var isR=rid&&reinforced[rid];
+        var hole=(layer==="bw"&&rid)?holes[rid]:null;
+        if(layer==="cam"){
+          var p=T((q[0][0]+q[2][0])/2,(q[0][1]+q[2][1])/2);
+          g.beginPath();g.arc(p[0],p[1],11*EX/3,0,6.2832);
+          g.fillStyle="rgba(0,214,255,0.95)";g.fill();
+          g.lineWidth=2.5;g.strokeStyle="#04303a";g.stroke();
+          g.beginPath();g.arc(p[0],p[1],4*EX/3,0,6.2832);g.fillStyle="#04303a";g.fill();
+          return;
+        }
+        g.beginPath();
+        var p0=T(q[0][0],q[0][1]);g.moveTo(p0[0],p0[1]);
+        for(var i=1;i<4;i++){var pi=T(q[i][0],q[i][1]);g.lineTo(pi[0],pi[1]);}
+        g.closePath();
+        if(hole){
+          var hs=HMAP[hole];
+          g.fillStyle="rgba(12,12,14,0.92)";g.fill();
+          g.lineWidth=2*EX/3*1.6;g.strokeStyle=hs.c;g.stroke();
+          var hc=T((q[0][0]+q[2][0])/2,(q[0][1]+q[2][1])/2);
+          g.beginPath();g.arc(hc[0],hc[1],8.5*EX/3,0,6.2832);
+          g.fillStyle=hs.c;g.fill();
+          g.lineWidth=2;g.strokeStyle="rgba(0,0,0,.55)";g.stroke();
+          g.font="bold "+(9*EX/3*1.15)+"px "+CJK;g.textAlign="center";g.textBaseline="middle";
+          g.fillStyle="#fff";g.fillText(hs.ch,hc[0],hc[1]+0.5);g.textBaseline="alphabetic";
+        }else if(isR){
+          g.fillStyle="rgba(178,196,214,0.96)";g.fill();
+          g.lineWidth=2.2*EX/3*1.6;g.strokeStyle="rgba(240,247,255,0.95)";g.stroke();
+          g.beginPath();
+          var a0=T(q[0][0],q[0][1]),a2=T(q[2][0],q[2][1]),a1=T(q[1][0],q[1][1]),a3=T(q[3][0],q[3][1]);
+          g.moveTo(a0[0],a0[1]);g.lineTo(a2[0],a2[1]);g.moveTo(a1[0],a1[1]);g.lineTo(a3[0],a3[1]);
+          g.lineWidth=1.4*EX/3*1.6;g.strokeStyle="rgba(70,90,110,0.9)";g.stroke();
+        }else{
+          if(stl.fill){g.fillStyle=stl.fill;g.fill();}
+          if(stl.stroke){
+            g.lineWidth=(stl.lw||2)*EX/3*1.6;
+            if(stl.dash)g.setLineDash(stl.dash.map(function(v){return v*EX/3;}));
+            g.strokeStyle=stl.stroke;g.stroke();g.setLineDash([]);
+          }
+        }
+      });
+    });
+    /* 房名 */
+    g.textAlign="center";
+    if(showLabels)F.labels.forEach(function(l){
+      var p=T(l.x,l.y);
+      g.shadowColor="rgba(0,0,0,.9)";g.shadowBlur=4*EX/3;
+      g.font="800 "+(13*EX)+"px "+CJK;
+      g.fillStyle=l.k==="obj"?"#F6B45A":l.k==="ext"?"#a9c6e0":"#e6edf4";
+      g.fillText(l.cn,p[0],p[1]);
+      if(l.en){g.font="600 "+(7*EX)+"px Menlo,monospace";g.fillStyle="#8B97A6";g.fillText(l.en.toUpperCase(),p[0],p[1]+9*EX);}
+      if(l.kind){g.font="500 "+(8*EX)+"px "+CJK;g.fillStyle="#63707f";g.fillText(l.kind,p[0],p[1]+(l.en?17:10)*EX);}
+      g.shadowBlur=0;
+    });
+    /* 包点 */
+    F.bombs.forEach(function(bm){
+      if(selSite!=="all"&&bm.t.charAt(0)!==selSite)return;
+      var p=T(bm.x,bm.y),r=11*EX;
+      g.shadowColor="rgba(255,60,50,.6)";g.shadowBlur=6*EX/3;
+      roundRect(g,p[0]-r,p[1]-r,r*2,r*2,3.5*EX);
+      var gr=g.createLinearGradient(p[0]-r,p[1]-r,p[0]+r,p[1]+r);
+      gr.addColorStop(0,"#FF5A3C");gr.addColorStop(1,"#E31E2E");
+      g.fillStyle=gr;g.fill();
+      g.shadowBlur=0;g.lineWidth=1.6*EX;g.strokeStyle="#fff";g.stroke();
+      g.font="800 "+(10*EX)+"px Menlo,monospace";g.fillStyle="#fff";g.textBaseline="middle";
+      g.fillText(bm.t,p[0],p[1]+0.5);g.textBaseline="alphabetic";
+    });
+    /* 道具 */
+    gads.forEach(function(gd){
+      if(gd.f!==f)return;
+      var spec=GMAP[gd.g],p=T(gd.x,gd.y),r=9*EX;
+      g.beginPath();g.arc(p[0],p[1],r,0,6.2832);
+      g.fillStyle=spec.c;g.fill();
+      g.lineWidth=1.4*EX;g.strokeStyle="rgba(255,255,255,.7)";g.stroke();
+      g.font=(9.5*EX)+"px "+CJK;g.textBaseline="middle";g.fillStyle="#fff";
+      g.fillText(spec.i,p[0],p[1]+0.5);g.textBaseline="alphabetic";
+    });
+    return TB+cr.h*EX;
+  }
+
+  var dy=0;
+  list.forEach(function(f){dy+=drawFloorBlock(f,dy);});
+  /* 底部总计 */
+  g.fillStyle="#11161d";g.fillRect(0,dy,TW,FOOT);
+  g.strokeStyle="#26303c";g.lineWidth=2;g.beginPath();g.moveTo(0,dy+1);g.lineTo(TW,dy+1);g.stroke();
+  g.textAlign="left";g.textBaseline="middle";
+  var tot=[];if(armUsed())tot.push("强化板×"+armUsed()+"/10");
+  var nh=Object.keys(holes).length;if(nh)tot.push("打洞×"+nh);
+  if(gads.length)tot.push("道具×"+gads.length);
+  g.font="700 "+(9.5*EX)+"px "+CJK;g.fillStyle="#C7D0DB";
+  g.fillText("R6 会所 · 防守方案"+(tot.length?(" · 全图合计："+tot.join("  ")):""),12,dy+FOOT*0.36);
+  g.font="500 "+(7*EX)+"px Menlo,monospace";g.fillStyle="#63707f";
+  g.fillText("linnnw14-max.github.io/r6-clubhouse-guide",12,dy+FOOT*0.74);
+  g.textBaseline="alphabetic";
   c.toBlob(function(b){
     var url=URL.createObjectURL(b);
     var img=document.getElementById("eimg");img.src=url;
     var a=document.getElementById("edl");a.href=url;
     var d=new Date();
-    a.download="R6会所-"+FNAME[floor]+"-装修-"+d.getFullYear()+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+(d.getDate()<10?"0":"")+d.getDate()+".png";
+    a.download="R6会所-防守方案-"+d.getFullYear()+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+(d.getDate()<10?"0":"")+d.getDate()+".png";
     document.getElementById("expmodal").style.display="flex";
   },"image/png");
 }
