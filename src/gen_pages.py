@@ -137,7 +137,14 @@ viewer_html = page(
     h1="会所 · 全楼层示意图",
     small="现役官方俯视图 · 高亮可破坏墙/天窗/软地板/摄像头 · 滚轮缩放",
     headright='<span class="verchip">实地校准 · <b>Y11S2</b></span>',
-    bar_extra='''    <button class="tog on" id="tBase"><span class="dot"></span>原图底图</button>
+    bar_extra='''    <span class="sitegrp">包点
+      <button class="sbtn on" data-site="all">全部</button>
+      <button class="sbtn" data-site="1">①卧室健身</button>
+      <button class="sbtn" data-site="2">②金库监控</button>
+      <button class="sbtn" data-site="3">③酒吧贮藏</button>
+      <button class="sbtn" data-site="4">④教堂军械</button>
+    </span>
+    <button class="tog on" id="tBase"><span class="dot"></span>原图底图</button>
     <button class="tog on" id="tMarks"><span class="dot"></span>破坏/摄像头标注</button>
     <button class="tog" id="tFills"><span class="dot"></span>房间色块</button>
     <button class="tog on" id="tLabels"><span class="dot"></span>房间名</button>''',

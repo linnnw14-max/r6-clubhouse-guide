@@ -102,27 +102,12 @@ def opos(f, cn):
         if l["cn"] == cn: return (l["x"], l["y"])
     return None
 
-# ---- 全局仿射 our->pic ----
-pairs = []
-for f, cn, rn in ANCHORS:
-    o, h = opos(f, cn), hpos(f, rn)
-    if o and h: pairs.append((o, h, f, cn))
-X = np.array([[o[0], o[1], 1] for o, h, f, cn in pairs])
-U = np.array([h[0] for o, h, f, cn in pairs]); V = np.array([h[1] for o, h, f, cn in pairs])
-def fit(X, U, V):
-    cu, *_ = np.linalg.lstsq(X, U, rcond=None)
-    cv, *_ = np.linalg.lstsq(X, V, rcond=None)
-    return cu, cv
-cu, cv = fit(X, U, V)
-res = np.hypot(X @ cu - U, X @ cv - V)
-print("anchors:", len(pairs), "residual px: mean %.1f max %.1f" % (res.mean(), res.max()))
-keep = res < 45
-for (o, h, f, cn), r, k_ in zip(pairs, res, keep):
-    if not k_: print("  drop outlier:", f, cn, "%.1f" % r)
-X, U, V = X[keep], U[keep], V[keep]
-cu, cv = fit(X, U, V)
-res = np.hypot(X @ cu - U, X @ cv - V)
-print("refit:", len(U), "residual px: mean %.1f max %.1f" % (res.mean(), res.max()))
+# ---- 坐标系 = r6calls 原图坐标 + 纯平移（2026-07-07 起：零旋转零缩放，地图方正） ----
+# our = pic + (175, 12)，即 1024×1024 原图居中放进 1374×1048 画布
+OX, OY = (MAPW - 1024) / 2.0, (MAPH - 1024) / 2.0
+cu = np.array([1.0, 0.0, -OX])   # our -> pic: u = x - OX
+cv = np.array([0.0, 1.0, -OY])
+print("transform: pure translation, offset=(%.0f,%.0f)" % (OX, OY))
 def our2pic(x, y): return (cu[0]*x + cu[1]*y + cu[2], cv[0]*x + cv[1]*y + cv[2])
 Ainv = np.linalg.inv(np.array([[cu[0], cu[1]], [cv[0], cv[1]]]))
 def pic2our(u, v):

@@ -20,7 +20,7 @@
   .tog{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink);background:var(--panel);border:1px solid var(--line2);border-radius:8px;padding:7px 12px;display:inline-flex;align-items:center;gap:7px}
   .tog .dot{width:9px;height:9px;border-radius:50%;background:var(--ink-faint)}.tog.on{border-color:var(--amber)}.tog.on .dot{background:var(--amber)}
 
-  .stage-wrap{display:grid;grid-template-columns:1fr 230px;gap:14px;align-items:start}
+  .stage-wrap{display:grid;grid-template-columns:1fr 258px;gap:14px;align-items:start}
   .viewer{position:relative;width:100%;height:min(78vh,860px);background:#0b0f14;border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:var(--sh);cursor:grab;touch-action:none;user-select:none}
   .viewer.grabbing{cursor:grabbing}
   body.painting .viewer{cursor:crosshair}
@@ -133,7 +133,7 @@
 .gsec{grid-column:1/-1;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-faint);margin:5px 0 0;padding-bottom:2px;border-bottom:1px dashed var(--line)}
 .gbtn{cursor:pointer;border:1px solid var(--line2);background:var(--bg2);border-radius:7px;padding:4px 6px;font-size:10.5px;color:var(--ink);display:flex;align-items:center;gap:4px;min-width:0}
 .gbtn .gi{flex:0 0 auto}
-.gbtn .gn{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.gbtn .gn{font-weight:600;min-width:0;flex:1;line-height:1.25;word-break:break-word}
 .gbtn .gc{color:var(--ink-faint);font-size:9px;white-space:nowrap;flex:0 0 auto}
 .gbtn.on{border-color:var(--amber);background:rgba(232,135,58,.14)}
 .gbtn.on .gc{color:var(--amber)}
@@ -141,3 +141,8 @@
 .gbtn.flash{border-color:#E5484D;background:rgba(229,72,77,.22)}
 .gad{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12.5px;border:2px solid rgba(255,255,255,.65);box-shadow:0 2px 6px #000a;cursor:pointer;pointer-events:auto}
 .resetall.confirm{background:#E5484D;color:#fff;border-color:#E5484D}
+
+/* 包点选择器 */
+.sitegrp{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--ink-faint);font-weight:600}
+.sbtn{cursor:pointer;font-size:11.5px;font-weight:600;color:var(--ink-dim);padding:6px 9px;border:1px solid var(--line2);border-radius:8px;background:var(--panel)}
+.sbtn.on{color:#12161b;background:#E5484D;border-color:#E5484D}

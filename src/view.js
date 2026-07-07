@@ -4,6 +4,9 @@ var CELL=DATA.cell,GW=DATA.gw,GH=DATA.gh,MAPW=1374,MAPH=1048,S=3;
 var FLOORS=DATA.floors;
 var ALPHA={gold:.82,room:.72,corr:.55,ext:.40};
 var floor="2",baseOn=true,fillsOn=false,marksOn=true;
+/* 包点选择：all=全显 1-4=只显该点并跳楼层 */
+var selSite="all";
+var SITES={"1":{f:"2",n:"卧室 · 健身房"},"2":{f:"2",n:"金库 · 监控室"},"3":{f:"1",n:"酒吧 · 大贮藏室"},"4":{f:"B",n:"教堂 · 军械库"}};
 /* 原图底(2x) 预加载 */
 var REFIMGS={};
 if(typeof REF!=="undefined"){
@@ -235,7 +238,9 @@ function buildMarks(){
     var h='<span class="cn">'+esc(l.cn)+'</span>';if(l.en)h+='<span class="en">'+esc(l.en)+'</span>';if(l.kind)h+='<span class="kd">'+esc(l.kind)+'</span>';
     lb.innerHTML=h;e.appendChild(lb);ov.appendChild(e);marks.push({el:e,x:l.x,y:l.y});
   });
-  F.bombs.forEach(function(bm){var e=document.createElement("div");e.className="m";var b=document.createElement("div");b.className="bomb";b.textContent=bm.t;e.appendChild(b);ov.appendChild(e);marks.push({el:e,x:bm.x,y:bm.y});});
+  F.bombs.forEach(function(bm){
+    if(selSite!=="all"&&bm.t.charAt(0)!==selSite)return;
+    var e=document.createElement("div");e.className="m";var b=document.createElement("div");b.className="bomb";b.textContent=bm.t;e.appendChild(b);ov.appendChild(e);marks.push({el:e,x:bm.x,y:bm.y});});
   gads.forEach(function(g,gi){
     if(g.f!==floor)return;
     var spec=GMAP[g.g];
@@ -397,6 +402,15 @@ document.getElementById("armClear").addEventListener("click",function(){
   btn.classList.remove("confirm");btn.textContent="清空全部装修";
   reinforced={};holes={};gads=[];selGad=null;selHole=null;
   saveSetup();updateTools(false);drawFloor(floor);buildMarks();
+});
+document.querySelectorAll(".sbtn").forEach(function(b){
+  b.addEventListener("click",function(){
+    var v=b.getAttribute("data-site");
+    selSite=v;
+    document.querySelectorAll(".sbtn").forEach(function(x){x.classList.toggle("on",x===b);});
+    if(v!=="all"&&SITES[v].f!==floor)switchFloor(SITES[v].f);
+    else buildMarks();
+  });
 });
 buildHpal();buildGpal();updateTools(false);
 window.addEventListener("resize",function(){fit();});
