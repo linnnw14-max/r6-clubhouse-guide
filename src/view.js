@@ -415,6 +415,82 @@ document.querySelectorAll(".sbtn").forEach(function(b){
 buildHpal();buildGpal();updateTools(false);
 window.addEventListener("resize",function(){fit();});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(selGad||selHole)){selGad=null;selHole=null;updateTools(false);}});
+
+/* ---------- 一键保存成图（当前楼层 + 所有装修/标注，所见即所得） ---------- */
+var FNAME={"R":"屋顶","2":"二楼","1":"一楼","B":"地下室"};
+function exportImage(){
+  var F=FLOORS[floor],bb=F.bbox,pad=24;
+  var x0=Math.max(0,bb.x-pad),y0=Math.max(0,bb.y-pad);
+  var x1=Math.min(MAPW,bb.x+bb.w+pad),y1=Math.min(MAPH,bb.y+bb.h+pad);
+  var w=x1-x0,h=y1-y0,EX=S,FOOT=46;
+  var c=document.createElement("canvas");c.width=w*EX;c.height=h*EX+FOOT*Math.round(EX/1.5);
+  var g=c.getContext("2d");
+  g.fillStyle="#0b0f14";g.fillRect(0,0,c.width,c.height);
+  g.drawImage(cv,x0*S,y0*S,w*S,h*S,0,0,w*EX,h*EX);
+  function T(x,y){return[(x-x0)*EX,(y-y0)*EX];}
+  var CJK='"PingFang SC","Microsoft YaHei",sans-serif';
+  g.textAlign="center";
+  if(showLabels)F.labels.forEach(function(l){
+    var p=T(l.x,l.y);
+    g.shadowColor="rgba(0,0,0,.9)";g.shadowBlur=4*EX/3;
+    g.font="800 "+(13*EX)+"px "+CJK;
+    g.fillStyle=l.k==="obj"?"#F6B45A":l.k==="ext"?"#a9c6e0":"#e6edf4";
+    g.fillText(l.cn,p[0],p[1]);
+    if(l.en){g.font="600 "+(7*EX)+"px Menlo,monospace";g.fillStyle="#8B97A6";g.fillText(l.en.toUpperCase(),p[0],p[1]+9*EX);}
+    if(l.kind){g.font="500 "+(8*EX)+"px "+CJK;g.fillStyle="#63707f";g.fillText(l.kind,p[0],p[1]+(l.en?17:10)*EX);}
+    g.shadowBlur=0;
+  });
+  F.bombs.forEach(function(bm){
+    if(selSite!=="all"&&bm.t.charAt(0)!==selSite)return;
+    var p=T(bm.x,bm.y),r=11*EX;
+    g.shadowColor="rgba(255,60,50,.6)";g.shadowBlur=6*EX/3;
+    roundRect(g,p[0]-r,p[1]-r,r*2,r*2,3.5*EX);
+    var gr=g.createLinearGradient(p[0]-r,p[1]-r,p[0]+r,p[1]+r);
+    gr.addColorStop(0,"#FF5A3C");gr.addColorStop(1,"#E31E2E");
+    g.fillStyle=gr;g.fill();
+    g.shadowBlur=0;g.lineWidth=1.6*EX;g.strokeStyle="#fff";g.stroke();
+    g.font="800 "+(10*EX)+"px Menlo,monospace";g.fillStyle="#fff";g.textBaseline="middle";
+    g.fillText(bm.t,p[0],p[1]+0.5);g.textBaseline="alphabetic";
+  });
+  gads.forEach(function(gd){
+    if(gd.f!==floor)return;
+    var spec=GMAP[gd.g],p=T(gd.x,gd.y),r=9*EX;
+    g.beginPath();g.arc(p[0],p[1],r,0,6.2832);
+    g.fillStyle=spec.c;g.fill();
+    g.lineWidth=1.4*EX;g.strokeStyle="rgba(255,255,255,.7)";g.stroke();
+    g.font=(9.5*EX)+"px "+CJK;g.textBaseline="middle";g.fillStyle="#fff";
+    g.fillText(spec.i,p[0],p[1]+0.5);g.textBaseline="alphabetic";
+  });
+  /* 底部信息条 */
+  var fy=h*EX;
+  g.fillStyle="#11161d";g.fillRect(0,fy,c.width,c.height-fy);
+  g.strokeStyle="#26303c";g.lineWidth=2;g.beginPath();g.moveTo(0,fy+1);g.lineTo(c.width,fy+1);g.stroke();
+  g.textAlign="left";
+  g.font="700 "+(11*EX)+"px "+CJK;g.fillStyle="#C7D0DB";
+  var used=[];if(armUsed())used.push("强化板×"+armUsed());
+  var nh=Object.keys(holes).length;if(nh)used.push("打洞×"+nh);
+  var ng=0;gads.forEach(function(gd){if(gd.f===floor)ng++;});if(gads.length)used.push("道具×"+gads.length);
+  g.fillText("R6 会所 · "+FNAME[floor]+(selSite!=="all"?(" · 包点"+selSite):"")+(used.length?(" · "+used.join(" ")):""),14*EX/3,fy+13*EX);
+  g.font="500 "+(7.5*EX)+"px Menlo,monospace";g.fillStyle="#63707f";
+  g.fillText("linnnw14-max.github.io/r6-clubhouse-guide",14*EX/3,fy+23*EX);
+  c.toBlob(function(b){
+    var url=URL.createObjectURL(b);
+    var img=document.getElementById("eimg");img.src=url;
+    var a=document.getElementById("edl");a.href=url;
+    var d=new Date();
+    a.download="R6会所-"+FNAME[floor]+"-装修-"+d.getFullYear()+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+(d.getDate()<10?"0":"")+d.getDate()+".png";
+    document.getElementById("expmodal").style.display="flex";
+  },"image/png");
+}
+function roundRect(g,x,y,w,h,r){
+  g.beginPath();g.moveTo(x+r,y);g.arcTo(x+w,y,x+w,y+h,r);g.arcTo(x+w,y+h,x,y+h,r);g.arcTo(x,y+h,x,y,r);g.arcTo(x,y,x+w,y,r);g.closePath();
+}
+document.getElementById("saveImg").addEventListener("click",exportImage);
+document.getElementById("eclose").addEventListener("click",function(){
+  document.getElementById("expmodal").style.display="none";
+  var img=document.getElementById("eimg");
+  if(img.src){URL.revokeObjectURL(img.src);img.src="";}
+});
 drawFloor(floor);fit();buildMarks();
 setTimeout(function(){fit();buildMarks();},70);
 })();

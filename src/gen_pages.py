@@ -126,6 +126,7 @@ VIEWER_TOOLS = '''      <div class="card" id="toolcard" style="border-color:rgba
         <div class="gpal" id="hpal"></div>
         <div class="gpal" id="gpal"></div>
         <p class="note2f">选中道具后<b>点地图放置</b>；点已放的图标=移除；数量为各干员自带配额。</p>
+        <button class="saveimg" id="saveImg">📸 保存成图（当前楼层）</button>
         <button class="resetall" id="armClear">清空全部装修</button>
       </div>
 '''
@@ -152,7 +153,12 @@ viewer_html = page(
     disc='<b>说明：</b>底图=<b>现役版本官方俯视图</b>；高亮标注取自 r6calls.com 现役数据，可破坏墙已按游戏拆成<b>单块板</b>。<b>自定义装修：点橙墙板/绿天窗放强化板（共10块）；选洞型给软墙打洞（过人/对枪/修脚/翻越）；选道具点地图摆位</b>。所有摆放自动保存在本机。纯白墙=不可破坏；条纹=窗、缺口=门。板块数按长度推算，不对随时说。' ,
     foot1="会所全楼层地图 · 现役官方俯视图 + 可破坏墙/天窗/摄像头标注",
     foot2="LIVE MAP · DESTRUCTIBLES HIGHLIGHTED",
-    tail="",
+    tail='''<div id="expmodal"><div class="ebox">
+  <div class="eh"><b>📸 装修图已生成</b><button class="x" id="eclose">×</button></div>
+  <img id="eimg" alt="导出图">
+  <div class="ebtns"><a id="edl" class="saveimg" download>⬇ 下载 PNG</a></div>
+  <p class="mnote">下载没反应的话，直接右键 / 长按上面的图片「另存为」即可。</p>
+</div></div>''',
     js=view_js,
     ref_js=REF_JS,
 )
