@@ -45,8 +45,8 @@ def ref_js_for(d, refpat):
         '"%s":"data:image/webp;base64,%s"' % (f, b64(D + refpat % f)) for f in d["floorOrder"]) + "};"
 
 def map_switch(cur):
-    links = "".join('<a href="%s" class="msw%s">%s</a>' % (m["out"], " on" if m["id"] == cur else "", m["mapcn"]) for m in MAPS)
-    return '<div class="mapsw"><a href="index.html" class="msw home" title="返回地图主页">🏠</a><span class="mapswlbl">地图</span>' + links + '</div>'
+    # 详细地图页只留「返回主页」按钮，换图走主页画廊
+    return '<div class="mapsw"><a href="index.html" class="msw home" title="返回地图主页">🏠 主页</a></div>'
 
 LEGEND = '''      <div class="card legcard">
         <details>
