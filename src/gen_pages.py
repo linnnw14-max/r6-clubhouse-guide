@@ -14,10 +14,12 @@ def b64(p): return base64.b64encode(open(p, "rb").read()).decode()
 
 # 地图清单（顺序=切换器里的顺序）
 MAPS = [
-    {"id": "club", "data": "data.json",      "refpat": "ref_%s.webp",      "out": "index.html", "mapcn": "会所",
+    {"id": "club", "data": "data.json",      "refpat": "ref_%s.webp",      "out": "club.html", "mapcn": "会所", "mapen": "Clubhouse",
+     "cover": "cover_club.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "监控室 + 金库经典防守点",
      "ey": "R6S · CLUBHOUSE · SETUP PLANNER", "h1": "会所 · 防守装修规划器",
      "title": "彩虹六号 · 会所防守装修规划器"},
-    {"id": "kafe", "data": "data_kafe.json", "refpat": "ref_kafe_%s.webp", "out": "kafe.html",  "mapcn": "咖啡馆",
+    {"id": "kafe", "data": "data_kafe.json", "refpat": "ref_kafe_%s.webp", "out": "kafe.html",  "mapcn": "咖啡馆", "mapen": "Kafe Dostoyevsky",
+     "cover": "cover_kafe.webp", "floors": "屋顶 / 三楼 / 二楼 / 一楼", "desc": "鸡尾酒吧 + 阅读室多层立体防守",
      "ey": "R6S · KAFE DOSTOYEVSKY · SETUP PLANNER", "h1": "咖啡馆 · 防守装修规划器",
      "title": "彩虹六号 · 咖啡馆防守装修规划器"},
 ]
@@ -44,7 +46,7 @@ def ref_js_for(d, refpat):
 
 def map_switch(cur):
     links = "".join('<a href="%s" class="msw%s">%s</a>' % (m["out"], " on" if m["id"] == cur else "", m["mapcn"]) for m in MAPS)
-    return '<div class="mapsw"><span class="mapswlbl">地图</span>' + links + '</div>'
+    return '<div class="mapsw"><a href="index.html" class="msw home" title="返回地图主页">🏠</a><span class="mapswlbl">地图</span>' + links + '</div>'
 
 LEGEND = '''      <div class="card legcard">
         <details>
@@ -164,6 +166,62 @@ for m in MAPS:
     p = BASE + m["out"]
     io.open(p, "w", encoding="utf-8").write(html)
     print("->", p, len(html) // 1024, "KB")
+
+# ---------- 主页（地图封面画廊） ----------
+cards = ""
+for m in MAPS:
+    cover_b64 = b64(D + m["cover"])
+    cards += '''    <a class="mcard" href="%s">
+      <div class="mcov" style="background-image:url('data:image/webp;base64,%s')"></div>
+      <div class="minfo">
+        <div class="mtitle">%s <span class="men">%s</span></div>
+        <div class="mdesc">%s</div>
+        <div class="mmeta"><span class="mfl">%s</span><span class="mgo">打开规划器 →</span></div>
+      </div>
+    </a>
+''' % (m["out"], cover_b64, m["mapcn"], m["mapen"], m["desc"], m["floors"])
+
+home_html = '''<meta charset="utf-8">
+<title>彩虹六号 · 防守装修规划器</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+''' + css + '''
+.home-wrap{max-width:1060px;margin:0 auto;padding:48px 22px 60px}
+.home-head{text-align:center;margin-bottom:38px}
+.home-head .ey{font-family:var(--font-mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--amber);font-weight:600}
+.home-head h1{font-size:34px;margin:12px 0 8px;font-weight:800;letter-spacing:.01em}
+.home-head p{font-size:15px;color:var(--ink-dim);margin:0}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.mcard{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .16s,border-color .16s,box-shadow .16s}
+.mcard:hover{transform:translateY(-4px);border-color:var(--amber);box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.mcov{aspect-ratio:16/10;background-size:cover;background-position:center;border-bottom:1px solid var(--line)}
+.minfo{padding:14px 16px 16px}
+.mtitle{font-size:19px;font-weight:800}
+.mtitle .men{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--ink-faint);letter-spacing:.06em;margin-left:6px}
+.mdesc{font-size:13px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
+.mmeta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mfl{font-size:11px;color:var(--ink-faint);font-family:var(--font-mono)}
+.mgo{font-size:13px;font-weight:700;color:var(--amber)}
+.home-foot{text-align:center;margin-top:40px;font-size:12px;color:var(--ink-faint);line-height:1.7}
+.home-foot a{color:var(--ink-dim)}
+</style>
+
+<div class="home-wrap">
+  <div class="home-head">
+    <span class="ey">R6S · SETUP PLANNER</span>
+    <h1>彩虹六号 · 防守装修规划器</h1>
+    <p>选一张地图开始规划：现役官方地图 · 强化墙 / 打洞 / 全防守道具摆放 · 一键导出方案图</p>
+  </div>
+  <div class="mgrid">
+''' + cards + '''  </div>
+  <div class="home-foot">
+    地图与结构数据取自 r6calls.com · 素材版权归 Ubisoft Entertainment · 个人非商业粉丝项目<br>
+    <a href="https://github.com/linnnw14-max/r6-clubhouse-guide">GitHub 源码</a>
+  </div>
+</div>
+'''
+io.open(BASE + "index.html", "w", encoding="utf-8").write(home_html)
+print("->", BASE + "index.html (主页)", len(home_html) // 1024, "KB")
 
 # ---------- 会所校准工具（沿用 data.json，仅会所） ----------
 club_data = io.open(D + "data.json", encoding="utf-8").read()
