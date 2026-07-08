@@ -42,6 +42,10 @@ MAPS = [
      "cover": "cover_consulate.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "领事办公室 + 车库多层攻防",
      "ey": "R6S · CONSULATE · SETUP PLANNER", "h1": "领事馆 · 防守装修规划器",
      "title": "彩虹六号 · 领事馆防守装修规划器"},
+    {"id": "villa", "data": "data_villa.json", "refpat": "ref_villa_%s.webp", "out": "villa.html", "mapcn": "别墅", "mapen": "Villa",
+     "cover": "cover_villa.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "飞行家 + 奖杯室 + 画廊豪宅攻防",
+     "ey": "R6S · VILLA · SETUP PLANNER", "h1": "别墅 · 防守装修规划器",
+     "title": "彩虹六号 · 别墅防守装修规划器"},
 ]
 
 def floor_btns(d):
