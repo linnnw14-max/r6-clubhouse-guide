@@ -70,6 +70,21 @@ MAPS = [
      "cover": "cover_emerald.webp", "floors": "二楼 / 一楼", "desc": "总裁办公室 + 九十号庄园攻防",
      "ey": "R6S · EMERALD PLAINS · SETUP PLANNER", "h1": "翠绿平原 · 防守装修规划器",
      "title": "彩虹六号 · 翠绿平原防守装修规划器"},
+    {"id": "kanal", "data": "data_kanal.json", "refpat": "ref_kanal_%s.webp", "out": "kanal.html", "mapcn": "运河", "mapen": "Kanal",
+     "cover": "cover_kanal.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "服务器 + 皮划艇双楼海港攻防",
+     "ey": "R6S · KANAL · SETUP PLANNER", "h1": "运河 · 防守装修规划器", "title": "彩虹六号 · 运河防守装修规划器"},
+    {"id": "outback", "data": "data_outback.json", "refpat": "ref_outback_%s.webp", "out": "outback.html", "mapcn": "内陆", "mapen": "Outback",
+     "cover": "cover_outback.webp", "floors": "屋顶 / 二楼 / 一楼", "desc": "洗衣房 + 爬行动物馆公路旅馆攻防",
+     "ey": "R6S · OUTBACK · SETUP PLANNER", "h1": "内陆 · 防守装修规划器", "title": "彩虹六号 · 内陆防守装修规划器"},
+    {"id": "fortress", "data": "data_fortress.json", "refpat": "ref_fortress_%s.webp", "out": "fortress.html", "mapcn": "堡垒", "mapen": "Fortress",
+     "cover": "cover_fortress.webp", "floors": "二楼 / 一楼", "desc": "指挥官室 + 食堂摩洛哥要塞攻防",
+     "ey": "R6S · FORTRESS · SETUP PLANNER", "h1": "堡垒 · 防守装修规划器", "title": "彩虹六号 · 堡垒防守装修规划器"},
+    {"id": "favela", "data": "data_favela.json", "refpat": "ref_favela_%s.webp", "out": "favela.html", "mapcn": "贫民窟", "mapen": "Favela",
+     "cover": "cover_favela.webp", "floors": "二楼 / 一楼", "desc": "服务器 + 彩色房屋巴西棚户攻防",
+     "ey": "R6S · FAVELA · SETUP PLANNER", "h1": "贫民窟 · 防守装修规划器", "title": "彩虹六号 · 贫民窟防守装修规划器"},
+    {"id": "stadiumbravo", "data": "data_stadiumbravo.json", "refpat": "ref_stadiumbravo_%s.webp", "out": "stadiumbravo.html", "mapcn": "体育场", "mapen": "Stadium Bravo",
+     "cover": "cover_stadiumbravo.webp", "floors": "二楼 / 一楼", "desc": "军械库 + 顶层套房融合竞技场攻防",
+     "ey": "R6S · STADIUM BRAVO · SETUP PLANNER", "h1": "体育场 · 防守装修规划器", "title": "彩虹六号 · 体育场防守装修规划器"},
 ]
 
 def floor_btns(d):

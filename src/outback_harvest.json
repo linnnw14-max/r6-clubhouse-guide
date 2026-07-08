@@ -1,0 +1,5 @@
+{
+"F1":[["4B",535,580],["4A",503,463],["3B",373,312],["3A",232,301],["Garage",595,727],["Bike",547,652],["Waiting",651,585],["Shop",584,544],["Reception",419,498],["Reptile",318,451],["Kitchen",484,490],["Restaurant",589,472],["Yellow",185,334],["Red",259,321],["Green",356,335],["Closet",426,288],["Lobby",667,409],["Bathroom",297,257],["Kitchen Hallway",508,367],["Loading",499,306],["Garage Stairs",469,645],["Yellow Stairs",165,306]],
+"F2":[["2B",534,588],["2A",588,462],["1B",395,325],["1A",325,328],["Lounge",563,651],["Garage",593,729],["Office",576,573],["Bull",504,481],["Party",595,501],["Supplies",658,553],["Gaming",446,411],["Connector",372,373],["Dorms",205,386],["Showers",318,398],["Shark",564,339],["Laundry",302,354],["Piano",410,302],["Terrace",500,314],["Party Hallway",588,410],["Motel Hallway",280,270],["Garage Stairs",496,611]],
+"F3":[["Roof",500,400],["Terrace",500,314]]
+}
