@@ -62,6 +62,14 @@ MAPS = [
      "cover": "cover_skyscraper.webp", "floors": "屋顶 / 二楼 / 一楼", "desc": "茶室 + 博物馆日式高楼攻防",
      "ey": "R6S · SKYSCRAPER · SETUP PLANNER", "h1": "摩天 · 防守装修规划器",
      "title": "彩虹六号 · 摩天防守装修规划器"},
+    {"id": "themepark", "data": "data_themepark.json", "refpat": "ref_themepark_%s.webp", "out": "themepark.html", "mapcn": "主题公园", "mapen": "Theme Park",
+     "cover": "cover_themepark.webp", "floors": "屋顶 / 二楼 / 一楼", "desc": "吧台 + 王座厅鬼屋乐园攻防",
+     "ey": "R6S · THEME PARK · SETUP PLANNER", "h1": "主题公园 · 防守装修规划器",
+     "title": "彩虹六号 · 主题公园防守装修规划器"},
+    {"id": "emerald", "data": "data_emerald.json", "refpat": "ref_emerald_%s.webp", "out": "emerald.html", "mapcn": "翠绿平原", "mapen": "Emerald Plains",
+     "cover": "cover_emerald.webp", "floors": "二楼 / 一楼", "desc": "总裁办公室 + 九十号庄园攻防",
+     "ey": "R6S · EMERALD PLAINS · SETUP PLANNER", "h1": "翠绿平原 · 防守装修规划器",
+     "title": "彩虹六号 · 翠绿平原防守装修规划器"},
 ]
 
 def floor_btns(d):
