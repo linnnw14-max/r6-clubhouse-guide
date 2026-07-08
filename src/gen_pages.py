@@ -26,6 +26,10 @@ MAPS = [
      "cover": "cover_bank.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "金库 + 柜员大厅经典银行攻防",
      "ey": "R6S · BANK · SETUP PLANNER", "h1": "银行 · 防守装修规划器",
      "title": "彩虹六号 · 银行防守装修规划器"},
+    {"id": "oregon", "data": "data_oregon.json", "refpat": "ref_oregon_%s.webp", "out": "oregon.html", "mapcn": "俄勒冈", "mapen": "Oregon",
+     "cover": "cover_oregon.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "儿童房 + 主卧 + 塔楼多点攻防",
+     "ey": "R6S · OREGON · SETUP PLANNER", "h1": "俄勒冈 · 防守装修规划器",
+     "title": "彩虹六号 · 俄勒冈防守装修规划器"},
 ]
 
 def floor_btns(d):
