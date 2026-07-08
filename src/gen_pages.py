@@ -54,6 +54,14 @@ MAPS = [
      "cover": "cover_labs.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "指挥室 + 外骨骼室科研设施攻防",
      "ey": "R6S · NIGHTHAVEN LABS · SETUP PLANNER", "h1": "夜鹰实验室 · 防守装修规划器",
      "title": "彩虹六号 · 夜鹰实验室防守装修规划器"},
+    {"id": "lair", "data": "data_lair.json", "refpat": "ref_lair_%s.webp", "out": "lair.html", "mapcn": "巢穴", "mapen": "Lair",
+     "cover": "cover_lair.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "面具室 + 导弹室夜鹰基地攻防",
+     "ey": "R6S · LAIR · SETUP PLANNER", "h1": "巢穴 · 防守装修规划器",
+     "title": "彩虹六号 · 巢穴防守装修规划器"},
+    {"id": "skyscraper", "data": "data_skyscraper.json", "refpat": "ref_skyscraper_%s.webp", "out": "skyscraper.html", "mapcn": "摩天", "mapen": "Skyscraper",
+     "cover": "cover_skyscraper.webp", "floors": "屋顶 / 二楼 / 一楼", "desc": "茶室 + 博物馆日式高楼攻防",
+     "ey": "R6S · SKYSCRAPER · SETUP PLANNER", "h1": "摩天 · 防守装修规划器",
+     "title": "彩虹六号 · 摩天防守装修规划器"},
 ]
 
 def floor_btns(d):

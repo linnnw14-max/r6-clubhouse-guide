@@ -1,0 +1,5 @@
+{
+"F1":[["4B",661,757],["4A",757,718],["3B",264,709],["3A",258,602],["Sand",878,644],["Kitchen",264,756],["Pantry",433,732],["Delivery",571,741],["Lobby",681,601],["Coat",483,563],["Reception",564,543],["Bedroom",760,688],["Closet",797,652],["Dressing",756,783],["Bathroom",659,688],["Restaurant",386,464],["Toilet",290,466],["BBQ",218,600],["Bar",479,680],["Sushi",398,614],["BBQ Hallway",259,522],["LobbyStairs",737,585],["Main Entrance",562,473]],
+"F2":[["2B",695,668],["2A",737,778],["1B",228,562],["1A",372,595],["Geisha",231,774],["Makeup",337,780],["Geisha Hallway",350,670],["Karaoke Hallway",312,580],["Tea",389,620],["Karaoke",237,508],["Drums",455,742],["Mezzanine",458,593],["Shrine",556,523],["Dragon",554,638],["VIP",654,595],["Lounge",649,770],["Museum",710,638],["Display",778,672],["Office",772,733],["Geisha Connector",227,669],["Terrace",558,697]],
+"F3":[["Roof",500,400],["Tower",717,324]]
+}
