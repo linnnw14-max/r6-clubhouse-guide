@@ -191,11 +191,13 @@ for m in MAPS:
     io.open(p, "w", encoding="utf-8").write(html)
     print("->", p, len(html) // 1024, "KB")
 
-# ---------- 主页（地图封面画廊） ----------
-cards = ""
-for m in MAPS:
-    cover_b64 = b64(D + m["cover"])
-    cards += '''    <a class="mcard" href="%s">
+# ---------- 主页（地图封面画廊，分排位/非排位池） ----------
+# 排位地图池（可编辑；不在此集合的都算非排位/休闲）
+RANKED = {"club", "kafe", "bank", "border", "chalet", "coastline", "consulate",
+          "oregon", "skyscraper", "labs", "lair", "themepark", "emerald", "villa"}
+
+def card_html(m):
+    return '''    <a class="mcard" href="%s">
       <div class="mcov" style="background-image:url('data:image/webp;base64,%s')"></div>
       <div class="minfo">
         <div class="mtitle">%s <span class="men">%s</span></div>
@@ -203,7 +205,21 @@ for m in MAPS:
         <div class="mmeta"><span class="mfl">%s</span><span class="mgo">打开规划器 →</span></div>
       </div>
     </a>
-''' % (m["out"], cover_b64, m["mapcn"], m["mapen"], m["desc"], m["floors"])
+''' % (m["out"], b64(D + m["cover"]), m["mapcn"], m["mapen"], m["desc"], m["floors"])
+
+ranked_maps = [m for m in MAPS if m["id"] in RANKED]
+casual_maps = [m for m in MAPS if m["id"] not in RANKED]
+
+def section(title_cn, title_en, note, maps):
+    if not maps: return ""
+    return ('''  <div class="poolhead"><h2>%s <span class="poolen">%s</span></h2><span class="poolcnt">%d 张</span></div>
+  <p class="poolnote">%s</p>
+  <div class="mgrid">
+''' % (title_cn, title_en, len(maps), note)) + "".join(card_html(m) for m in maps) + '''  </div>
+'''
+
+sections = section("排位地图池", "RANKED POOL", "当前排位/竞技轮换的地图", ranked_maps) \
+         + section("非排位 · 休闲", "CASUAL", "仅休闲/快速匹配的地图", casual_maps)
 
 home_html = '''<meta charset="utf-8">
 <title>彩虹六号 · 防守装修规划器</title>
@@ -215,6 +231,12 @@ home_html = '''<meta charset="utf-8">
 .home-head .ey{font-family:var(--font-mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--amber);font-weight:600}
 .home-head h1{font-size:34px;margin:12px 0 8px;font-weight:800;letter-spacing:.01em}
 .home-head p{font-size:15px;color:var(--ink-dim);margin:0}
+.poolhead{display:flex;align-items:baseline;gap:12px;margin:34px 0 2px;padding-bottom:8px;border-bottom:1px solid var(--line)}
+.poolhead:first-of-type{margin-top:8px}
+.poolhead h2{font-size:20px;font-weight:800;margin:0}
+.poolhead .poolen{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--amber);margin-left:6px}
+.poolhead .poolcnt{margin-left:auto;font-size:12px;color:var(--ink-faint);font-family:var(--font-mono)}
+.poolnote{font-size:12.5px;color:var(--ink-faint);margin:8px 0 16px}
 .mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
 .mcard{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .16s,border-color .16s,box-shadow .16s}
 .mcard:hover{transform:translateY(-4px);border-color:var(--amber);box-shadow:0 14px 34px rgba(0,0,0,.5)}
@@ -236,9 +258,7 @@ home_html = '''<meta charset="utf-8">
     <h1>彩虹六号 · 防守装修规划器</h1>
     <p>选一张地图开始规划：现役官方地图 · 强化墙 / 打洞 / 全防守道具摆放 · 一键导出方案图</p>
   </div>
-  <div class="mgrid">
-''' + cards + '''  </div>
-  <div class="home-foot">
+''' + sections + '''  <div class="home-foot">
     地图与结构数据取自 r6calls.com · 素材版权归 Ubisoft Entertainment · 个人非商业粉丝项目<br>
     <a href="https://github.com/linnnw14-max/r6-clubhouse-guide">GitHub 源码</a>
   </div>
