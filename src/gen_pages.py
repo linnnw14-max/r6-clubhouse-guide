@@ -46,6 +46,14 @@ MAPS = [
      "cover": "cover_villa.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "飞行家 + 奖杯室 + 画廊豪宅攻防",
      "ey": "R6S · VILLA · SETUP PLANNER", "h1": "别墅 · 防守装修规划器",
      "title": "彩虹六号 · 别墅防守装修规划器"},
+    {"id": "chalet", "data": "data_chalet.json", "refpat": "ref_chalet_%s.webp", "out": "chalet.html", "mapcn": "木屋", "mapen": "Chalet",
+     "cover": "cover_chalet.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "主卧 + 游戏室 + 酒窖雪山木屋",
+     "ey": "R6S · CHALET · SETUP PLANNER", "h1": "木屋 · 防守装修规划器",
+     "title": "彩虹六号 · 木屋防守装修规划器"},
+    {"id": "labs", "data": "data_labs.json", "refpat": "ref_labs_%s.webp", "out": "labs.html", "mapcn": "夜鹰实验室", "mapen": "Nighthaven Labs",
+     "cover": "cover_labs.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "指挥室 + 外骨骼室科研设施攻防",
+     "ey": "R6S · NIGHTHAVEN LABS · SETUP PLANNER", "h1": "夜鹰实验室 · 防守装修规划器",
+     "title": "彩虹六号 · 夜鹰实验室防守装修规划器"},
 ]
 
 def floor_btns(d):

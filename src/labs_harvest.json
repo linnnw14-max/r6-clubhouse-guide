@@ -1,0 +1,6 @@
+{
+"F0":[["4B",604,564],["4A",74,437],["Emergency",705,974],["AssemblyDelivery",453,844],["AnimusDelivery",202,818],["Animus",212,721],["Cargo",245,182],["Nano Hallway",520,155],["Cargo Stairs",223,47],["Assembly",469,581],["Nano",482,321],["Exo Hallway",855,223],["Exo",734,418],["Tank",263,412],["VendingStairs",936,471]],
+"F1":[["3B",442,806],["3A",248,677],["2B",878,272],["2A",950,459],["West Stairs",120,552],["Containers",704,920],["Delivery",436,938],["Control",334,603],["Cafeteria",759,327],["Kitchen",900,375],["Gaming",542,523],["Control Hallway",188,564],["WarehouseEntrance",221,893],["Warehouse",252,778],["Storage",488,714],["StorageHallway",580,684],["Vending",745,584],["Pantry",900,540],["Lobby",716,66],["Lobby Hallway",725,223],["Gaming Hallway",549,426],["Cafeteria Hallway",634,335],["Blue Stairs",356,366]],
+"F2":[["1A",361,576],["1B",526,655],["West Stairs",80,608],["Containers",630,955],["Delivery",344,987],["Command",284,656],["Server",455,672],["Meeting",744,363],["Lobby",644,151],["Connector",583,545],["Electrical",619,664],["Command Hallway",214,566],["Blue Stairs",303,436],["Catwalk",272,774],["Warehouse",238,842],["IT",466,788],["Observatory",346,208],["Meeting Hallway",652,408],["Top Lobby",691,279]],
+"F3":[["Helipad",500,400],["Park",59,65]]
+}
