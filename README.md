@@ -1,8 +1,10 @@
 # R6 会所防守装修规划器（Clubhouse Setup Planner）
 
-彩虹六号：围攻 **会所（Clubhouse）** 四层交互地图 + 防守方装修规划工具。单个 HTML 文件，打开即用。
+彩虹六号：围攻 **多地图**（会所 Clubhouse / 咖啡馆 Kafe Dostoyevsky）交互地图 + 防守方装修规划工具。单个 HTML 文件，打开即用，顶部可切换地图。
 
 **在线使用：** https://linnnw14-max.github.io/r6-clubhouse-guide/
+
+**地图：** 会所 Clubhouse（[index.html](https://linnnw14-max.github.io/r6-clubhouse-guide/)）· 咖啡馆 Kafe Dostoyevsky（[kafe.html](https://linnnw14-max.github.io/r6-clubhouse-guide/kafe.html)）· 页面顶部可一键切换
 
 ## 功能
 
@@ -17,9 +19,10 @@
 
 | 文件 | 说明 |
 |---|---|
-| `index.html` | 主页面（规划器），自包含单文件，双击即用 |
+| `index.html` | 会所规划器（主页），自包含单文件 |
+| `kafe.html` | 咖啡馆规划器 |
 | `calib.html` | 校准工具：拖房名/画格子修正地图数据，导出结果 |
-| `src/` | 生成器源码：`data.json`（唯一数据源）→ `gen_pages.py` 生成两个页面 |
+| `src/` | 生成器源码：`data.json`/`data_kafe.json`（各地图数据源）→ `gen_pages.py` 生成所有页面；`build_kafe.py` 从 r6calls 数据构建咖啡馆 |
 
 ### 改数据 / 重新生成
 

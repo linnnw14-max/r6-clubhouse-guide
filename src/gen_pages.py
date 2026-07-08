@@ -1,50 +1,50 @@
 # -*- coding: utf-8 -*-
-# 从 data.json(唯一数据源) 生成 正式版 index.html 和 校准工具.html
-# 以后改数据: 改 data.json → 重跑本脚本。用户涂改的格子/挪的标注 → 先用套用脚本更新 data.json。
+# 从 data*.json 生成各地图的规划器页面 + 会所校准工具。多地图数据驱动。
+# 改数据: 改对应 data 文件 → 重跑本脚本。
 import io, json, os, shutil, hashlib, base64
 
 D = os.path.dirname(os.path.abspath(__file__)) + "/"
 BASE = "/Users/laoba/Desktop/R6-Clubhouse-Guide/"
 
-# 官方蓝图描图底图（只进校准工具，不进可分享的正式版）
-REF_JS = "var REF={" + ",".join(
-    '"%s":"data:image/webp;base64,%s"' % (f, base64.b64encode(open(D + "ref_%s.webp" % f, "rb").read()).decode())
-    for f in ["R", "2", "1", "B"]
-) + "};"
-
-data = io.open(D + "data.json", encoding="utf-8").read()
 css = io.open(D + "style.css", encoding="utf-8").read()
 view_js = io.open(D + "view.js", encoding="utf-8").read()
 edit_js = io.open(D + "edit.js", encoding="utf-8").read()
 
-# 2026-07-06 用户要求：校准工具里把已有房间涂色全清掉（保留房名/点位/调色板），从空白格子照官方底图重描。
-# 正式版 index.html 仍用 data.json 里的彩色格子；等用户描完的 v2 导出套用后，把这个开关改回 False。
-EDITOR_GRID_BLANK = False
+def b64(p): return base64.b64encode(open(p, "rb").read()).decode()
 
-data_obj = json.loads(data)
-if EDITOR_GRID_BLANK:
-    import copy
-    eobj = copy.deepcopy(data_obj)
-    blank = "." * eobj["gw"]
-    for f in eobj["floors"]:
-        eobj["floors"][f]["grid"] = [blank for _ in range(eobj["gh"])]
-    edit_data = json.dumps(eobj, ensure_ascii=False)
-    print("editor grid: BLANK (照底图重描模式)")
-else:
-    edit_data = data
+# 地图清单（顺序=切换器里的顺序）
+MAPS = [
+    {"id": "club", "data": "data.json",      "refpat": "ref_%s.webp",      "out": "index.html", "mapcn": "会所",
+     "ey": "R6S · CLUBHOUSE · SETUP PLANNER", "h1": "会所 · 防守装修规划器",
+     "title": "彩虹六号 · 会所防守装修规划器"},
+    {"id": "kafe", "data": "data_kafe.json", "refpat": "ref_kafe_%s.webp", "out": "kafe.html",  "mapcn": "咖啡馆",
+     "ey": "R6S · KAFE DOSTOYEVSKY · SETUP PLANNER", "h1": "咖啡馆 · 防守装修规划器",
+     "title": "彩虹六号 · 咖啡馆防守装修规划器"},
+]
 
-# DATAVER = 编辑器基线数据的内容哈希，自动注入，忘 bump 这种事从机制上消灭
-dataver = "clubhouse-" + hashlib.md5(edit_data.encode("utf-8")).hexdigest()[:10]
-assert "__DATAVER__" in edit_js
-edit_js = edit_js.replace("__DATAVER__", dataver)
-print("DATAVER =", dataver)
+def floor_btns(d):
+    order = d["floorOrder"]; names = d["floorNames"]; en = d.get("floorEn", {}); dflt = d.get("defaultFloor", order[0])
+    out = []
+    for f in order:
+        out.append('    <button class="fbtn%s" data-f="%s">%s<span class="en">%s</span></button>'
+                   % (" on" if f == dflt else "", f, names.get(f, f), en.get(f, "")))
+    out += ['    <span class="fnote" id="fnote"></span>', '    <span class="spacer"></span>']
+    return "\n".join(out)
 
-FLOOR_BTNS = '''    <button class="fbtn" data-f="R">屋顶<span class="en">ROOF</span></button>
-    <button class="fbtn on" data-f="2">二楼<span class="en">2F</span></button>
-    <button class="fbtn" data-f="1">一楼<span class="en">1F</span></button>
-    <button class="fbtn" data-f="B">地下室<span class="en">B</span></button>
-    <span class="fnote" id="fnote"></span>
-    <span class="spacer"></span>'''
+def site_sel(d):
+    out = ['    <span class="sitegrp">包点', '      <button class="sbtn on" data-site="all">全部</button>']
+    for s in d.get("sites", []):
+        out.append('      <button class="sbtn" data-site="%s">%s</button>' % (s["id"], s["n"]))
+    out.append('    </span>')
+    return "\n".join(out)
+
+def ref_js_for(d, refpat):
+    return "var REF={" + ",".join(
+        '"%s":"data:image/webp;base64,%s"' % (f, b64(D + refpat % f)) for f in d["floorOrder"]) + "};"
+
+def map_switch(cur):
+    links = "".join('<a href="%s" class="msw%s">%s</a>' % (m["out"], " on" if m["id"] == cur else "", m["mapcn"]) for m in MAPS)
+    return '<div class="mapsw"><span class="mapswlbl">地图</span>' + links + '</div>'
 
 LEGEND = '''      <div class="card legcard">
         <details>
@@ -72,10 +72,21 @@ VIEWER_STAGE = '''    <div class="viewer" id="viewer">
       <div class="hint" id="modehint">滚轮缩放 · 拖动平移 · 高亮 = 可破坏墙/天窗等（见右侧图例）</div>
     </div>'''
 
-def page(title, ey, h1, small, headright, bar_extra, side_pre, side_post, disc, foot1, foot2, tail, js, ref_js="", page_data=None, bar2=""):
-    page_data = page_data if page_data is not None else data
+VIEWER_TOOLS = '''      <div class="card" id="toolcard" style="border-color:rgba(232,135,58,.45)">
+        <h3>防守装修 <span class="mono">SETUP</span></h3>
+        <div class="armrow" id="armrow"><span>🛡 强化板（点墙板/天窗）</span><span class="armn-wrap">剩 <b id="armn">10</b>/10</span></div>
+        <div class="gsec" style="margin-top:6px">打洞（选类型后点橙色墙板）</div>
+        <div class="gpal" id="hpal"></div>
+        <div id="gpal"></div>
+        <p class="note2f">选中道具后<b>点地图放置</b>；点已放的图标=移除；数量为各干员自带配额。</p>
+        <button class="saveimg" id="saveImg">📸 保存成图（当前楼层）</button>
+        <button class="resetall" id="armClear">清空全部装修</button>
+      </div>
+'''
+
+def page(title, ey, h1, small, headright, floor_btns_html, bar_extra, side_pre, side_post, disc, foot1, foot2, tail, js, ref_js="", page_data=None, bar2=""):
     bar2_html = ('  <div class="bar bar2">\n' + bar2 + '\n  </div>\n') if bar2 else ''
-    return '''<meta charset="utf-8">
+    return ('''<meta charset="utf-8">
 <title>''' + title + '''</title>
 <style>
 ''' + css + '''
@@ -93,7 +104,7 @@ def page(title, ey, h1, small, headright, bar_extra, side_pre, side_post, disc, 
   </header>
 
   <div class="bar" id="floorbar">
-''' + FLOOR_BTNS + '''
+''' + floor_btns_html + '''
 ''' + bar_extra + '''
   </div>
 ''' + bar2_html + '''
@@ -121,54 +132,47 @@ var DATA=''' + page_data + ''';
 ''' + ref_js + '''
 ''' + js + '''
 </script>
-'''
+''')
 
-VIEWER_TOOLS = '''      <div class="card" id="toolcard" style="border-color:rgba(232,135,58,.45)">
-        <h3>防守装修 <span class="mono">SETUP</span></h3>
-        <div class="armrow" id="armrow"><span>🛡 强化板（点墙板/天窗）</span><span class="armn-wrap">剩 <b id="armn">10</b>/10</span></div>
-        <div class="gsec" style="margin-top:6px">打洞（选类型后点橙色墙板）</div>
-        <div class="gpal" id="hpal"></div>
-        <div id="gpal"></div>
-        <p class="note2f">选中道具后<b>点地图放置</b>；点已放的图标=移除；数量为各干员自带配额。</p>
-        <button class="saveimg" id="saveImg">📸 保存成图（当前楼层）</button>
-        <button class="resetall" id="armClear">清空全部装修</button>
-      </div>
-'''
-
-# ---------- 正式版 ----------
-viewer_html = page(
-    title="彩虹六号 · 会所防守装修规划器",
-    ey="R6S · CLUBHOUSE · SETUP PLANNER",
-    h1="会所 · 防守装修规划器",
-    small="现役官方地图 · 强化墙 / 打洞 / 全防守道具摆放 · 一键导出方案图",
-    headright='<span class="verchip">实地校准 · <b>Y11S2</b></span>',
-    bar_extra='''    <span class="sitegrp">包点
-      <button class="sbtn on" data-site="all">全部</button>
-      <button class="sbtn" data-site="1">① 卧室·健身</button>
-      <button class="sbtn" data-site="2">② 金库·监控</button>
-      <button class="sbtn" data-site="3">③ 酒吧·贮藏</button>
-      <button class="sbtn" data-site="4">④ 教堂·军械</button>
-    </span>''',
-    bar2='''    <span class="barlabel">显示</span>
-    <button class="tog on" id="tBase"><span class="dot"></span>原图底图</button>
-    <button class="tog on" id="tMarks"><span class="dot"></span>破坏/摄像头标注</button>
-    <button class="tog on" id="tLabels"><span class="dot"></span>房间名</button>
-    <button class="tog" id="tFills"><span class="dot"></span>房间色块</button>''',
-    side_pre=VIEWER_TOOLS, side_post="",
-    disc='<b>说明：</b>底图=<b>现役版本官方俯视图</b>；高亮标注取自 r6calls.com 现役数据，可破坏墙已按游戏拆成<b>单块板</b>。<b>自定义装修：点橙墙板/绿天窗放强化板（共10块）；选洞型给软墙打洞（过人/对枪/修脚/翻越）；选道具点地图摆位</b>。所有摆放自动保存在本机。纯白墙=不可破坏；条纹=窗、缺口=门。板块数按长度推算，不对随时说。' ,
-    foot1="会所防守装修规划器 · 现役官方地图 · 强化/打洞/道具/方案导出",
-    foot2="LIVE MAP · DESTRUCTIBLES HIGHLIGHTED",
-    tail='''<div id="expmodal"><div class="ebox">
+EXPMODAL = '''<div id="expmodal"><div class="ebox">
   <div class="eh"><b>📸 装修图已生成</b><button class="x" id="eclose">×</button></div>
   <img id="eimg" alt="导出图">
   <div class="ebtns"><a id="edl" class="saveimg" download>⬇ 下载 PNG</a></div>
   <p class="mnote">下载没反应的话，直接右键 / 长按上面的图片「另存为」即可。</p>
-</div></div>''',
-    js=view_js,
-    ref_js=REF_JS,
-)
+</div></div>'''
 
-# ---------- 校准工具 ----------
+# ---------- 各地图规划器 ----------
+for m in MAPS:
+    d = json.load(io.open(D + m["data"], encoding="utf-8"))
+    data_str = io.open(D + m["data"], encoding="utf-8").read()
+    html = page(
+        title=m["title"], ey=m["ey"], h1=m["h1"],
+        small="现役官方地图 · 强化墙 / 打洞 / 全防守道具摆放 · 一键导出方案图",
+        headright=map_switch(m["id"]),
+        floor_btns_html=floor_btns(d),
+        bar_extra=site_sel(d),
+        bar2='''    <span class="barlabel">显示</span>
+    <button class="tog on" id="tBase"><span class="dot"></span>原图底图</button>
+    <button class="tog on" id="tMarks"><span class="dot"></span>破坏/摄像头标注</button>
+    <button class="tog on" id="tLabels"><span class="dot"></span>房间名</button>
+    <button class="tog" id="tFills"><span class="dot"></span>房间色块</button>''',
+        side_pre=VIEWER_TOOLS, side_post="",
+        disc='<b>说明：</b>底图=<b>现役版本官方俯视图</b>；高亮标注取自 r6calls.com 现役数据，可破坏墙已按游戏拆成<b>单块板</b>。<b>自定义装修：点橙墙板/绿天窗放强化板（共10块）；选洞型给软墙打洞（过人/对枪/修脚/翻越）；选道具点地图摆位</b>。所有摆放自动保存在本机。纯白墙=不可破坏；条纹=窗、缺口=门。板块数按长度推算，不对随时说。',
+        foot1=m["mapcn"] + "防守装修规划器 · 现役官方地图 · 强化/打洞/道具/方案导出",
+        foot2="LIVE MAP · DESTRUCTIBLES HIGHLIGHTED",
+        tail=EXPMODAL, js=view_js, ref_js=ref_js_for(d, m["refpat"]), page_data=data_str)
+    p = BASE + m["out"]
+    io.open(p, "w", encoding="utf-8").write(html)
+    print("->", p, len(html) // 1024, "KB")
+
+# ---------- 会所校准工具（沿用 data.json，仅会所） ----------
+club_data = io.open(D + "data.json", encoding="utf-8").read()
+dataver = "clubhouse-" + hashlib.md5(club_data.encode("utf-8")).hexdigest()[:10]
+assert "__DATAVER__" in edit_js
+edit_js = edit_js.replace("__DATAVER__", dataver)
+print("DATAVER =", dataver)
+club = json.load(io.open(D + "data.json", encoding="utf-8"))
+
 editor_side_pre = '''      <div class="card" style="border-color:rgba(232,135,58,.5)">
         <h3>怎么用 <span class="mono">HOW TO</span></h3>
         <ol class="howto">
@@ -195,7 +199,6 @@ editor_side_pre = '''      <div class="card" style="border-color:rgba(232,135,58
         <div class="dellist" id="dellist"></div>
       </div>
 '''
-
 editor_tail = '''<div id="mini"></div>
 <div id="modal"><div class="mbox">
   <div class="mh"><b>校准结果</b><span id="mstatus"></span><button class="x" id="mclose">×</button></div>
@@ -204,13 +207,12 @@ editor_tail = '''<div id="mini"></div>
   <p class="mnote">复制后，回到 Claude 对话框粘贴发送即可。</p>
 </div></div>
 '''
-
 editor_html = page(
     title="彩虹六号 · 会所校准工具（拖标注 + 画格子）",
-    ey="R6S · CLUBHOUSE · 校准工具",
-    h1="会所 · 校准工具",
+    ey="R6S · CLUBHOUSE · 校准工具", h1="会所 · 校准工具",
     small="拖标注挪房名 · 画格子改房间形状 → 点右上「复制校准结果」→ 粘贴发给 Claude",
     headright='<button class="exportbtn" id="exportBtn">✅ 完成 · 复制校准结果</button>',
+    floor_btns_html=floor_btns(club),
     bar_extra='''    <button class="modebtn on" id="mLabel">✋ 拖标注</button>
     <button class="modebtn" id="mPaint">🖌 画格子</button>
     <button class="tog" id="tRef"><span class="dot"></span>🗺 底图对照</button>
@@ -221,16 +223,7 @@ editor_html = page(
     disc='<b>这是校准工具：</b>房名/点位不准就<b>拖</b>，房间形状不对就切到<b>画格子</b>模式涂改（涂错了「撤销一笔」）。弄完点右上<b>「✅ 完成 · 复制校准结果」</b>粘贴发给 Claude，我来更新正式版。',
     foot1="会所校准工具 · 拖标注 + 画格子 + 底图对照描图 · 结果发回 Claude 生成正式版",
     foot2="CALIBRATION · DRAG & PAINT & TRACE",
-    tail=editor_tail,
-    js=edit_js,
-    ref_js=REF_JS,
-    page_data=edit_data,
-)
-
-for name, html in [("index.html", viewer_html), ("校准工具.html", editor_html)]:
-    p = BASE + name
-    if os.path.exists(p):
-        bk = BASE + name.replace(".html", "") + "_彩色底图_备份.html"
-        if not os.path.exists(bk): shutil.copyfile(p, bk)
-    io.open(p, "w", encoding="utf-8").write(html)
-    print("->", p, len(html) // 1024, "KB")
+    tail=editor_tail, js=edit_js,
+    ref_js=ref_js_for(club, "ref_%s.webp"), page_data=club_data)
+io.open(BASE + "校准工具.html", "w", encoding="utf-8").write(editor_html)
+print("->", BASE + "校准工具.html", len(editor_html) // 1024, "KB")

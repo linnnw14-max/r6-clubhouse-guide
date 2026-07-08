@@ -3,10 +3,10 @@
 var CELL=DATA.cell,GW=DATA.gw,GH=DATA.gh,MAPW=1374,MAPH=1048,S=3;
 var FLOORS=DATA.floors;
 var ALPHA={gold:.82,room:.72,corr:.55,ext:.40};
-var floor="2",baseOn=true,fillsOn=false,marksOn=true;
+var floor=DATA.defaultFloor||DATA.floorOrder[0],baseOn=true,fillsOn=false,marksOn=true;
 /* 包点选择：all=全显 1-4=只显该点并跳楼层 */
 var selSite="all";
-var SITES={"1":{f:"2",n:"卧室 · 健身房"},"2":{f:"2",n:"金库 · 监控室"},"3":{f:"1",n:"酒吧 · 大贮藏室"},"4":{f:"B",n:"教堂 · 军械库"}};
+var SITES={};(DATA.sites||[]).forEach(function(s){SITES[s.id]={f:s.f,n:s.n};});
 /* 原图底(2x) 预加载 */
 var REFIMGS={};
 if(typeof REF!=="undefined"){
@@ -427,7 +427,7 @@ window.addEventListener("resize",function(){fit();});
 document.addEventListener("keydown",function(e){if(e.key==="Escape"&&(selGad||selHole)){selGad=null;selHole=null;updateTools(false);}});
 
 /* ---------- 一键保存成图（当前楼层 + 所有装修/标注，所见即所得） ---------- */
-var FNAME={"R":"屋顶","2":"二楼","1":"一楼","B":"地下室"};
+var FNAME=DATA.floorNames||{};
 function floorStats(f){
   var a=0,h=0,g2=0;
   Object.keys(reinforced).forEach(function(id){if(id.split(":")[0]===f)a++;});
@@ -439,7 +439,7 @@ function exportImage(){
   var EX=S,PAD=24,TB=17*EX,FOOT=16*EX;
   var CJK='"PingFang SC","Microsoft YaHei",sans-serif';
   /* 参与导出的楼层：从上到下，装修过的 or 当前层 */
-  var list=["R","2","1","B"].filter(function(f){return f===floor||floorStats(f).any;});
+  var list=DATA.floorOrder.filter(function(f){return f===floor||floorStats(f).any;});
   var crops={};
   list.forEach(function(f){
     var bb=FLOORS[f].bbox;
@@ -568,7 +568,7 @@ function exportImage(){
   var nh=Object.keys(holes).length;if(nh)tot.push("打洞×"+nh);
   if(gads.length)tot.push("道具×"+gads.length);
   g.font="700 "+(9.5*EX)+"px "+CJK;g.fillStyle="#C7D0DB";
-  g.fillText("R6 会所 · 防守方案"+(tot.length?(" · 全图合计："+tot.join("  ")):""),12,dy+FOOT*0.36);
+  var MAPCN=DATA.mapcn||"会所";g.fillText("R6 "+MAPCN+" · 防守方案"+(tot.length?(" · 全图合计："+tot.join("  ")):""),12,dy+FOOT*0.36);
   g.font="500 "+(7*EX)+"px Menlo,monospace";g.fillStyle="#63707f";
   g.fillText("linnnw14-max.github.io/r6-clubhouse-guide",12,dy+FOOT*0.74);
   g.textBaseline="alphabetic";
@@ -577,7 +577,7 @@ function exportImage(){
     var img=document.getElementById("eimg");img.src=url;
     var a=document.getElementById("edl");a.href=url;
     var d=new Date();
-    a.download="R6会所-防守方案-"+d.getFullYear()+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+(d.getDate()<10?"0":"")+d.getDate()+".png";
+    a.download="R6"+(DATA.mapcn||"会所")+"-防守方案-"+d.getFullYear()+(d.getMonth()<9?"0":"")+(d.getMonth()+1)+(d.getDate()<10?"0":"")+d.getDate()+".png";
     document.getElementById("expmodal").style.display="flex";
   },"image/png");
 }

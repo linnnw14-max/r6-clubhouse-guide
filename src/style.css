@@ -200,3 +200,10 @@
 #toolcard .note2f{font-size:12px;line-height:1.55}
 #toolcard .saveimg{font-size:13.5px;padding:9px 0}
 #toolcard .resetall{font-size:12.5px}
+
+/* 地图切换器 */
+.mapsw{display:inline-flex;align-items:center;gap:4px}
+.mapsw .mapswlbl{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;color:var(--ink-faint);margin-right:3px}
+.msw{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--ink-dim);padding:6px 13px;border:1px solid var(--line2);border-radius:8px;background:var(--panel);text-decoration:none}
+.msw:hover{border-color:var(--amber);color:var(--ink)}
+.msw.on{color:#12161b;background:var(--amber);border-color:var(--amber)}
