@@ -22,6 +22,10 @@ MAPS = [
      "cover": "cover_kafe.webp", "floors": "屋顶 / 三楼 / 二楼 / 一楼", "desc": "鸡尾酒吧 + 阅读室多层立体防守",
      "ey": "R6S · KAFE DOSTOYEVSKY · SETUP PLANNER", "h1": "咖啡馆 · 防守装修规划器",
      "title": "彩虹六号 · 咖啡馆防守装修规划器"},
+    {"id": "bank", "data": "data_bank.json", "refpat": "ref_bank_%s.webp", "out": "bank.html",  "mapcn": "银行", "mapen": "Bank",
+     "cover": "cover_bank.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "金库 + 柜员大厅经典银行攻防",
+     "ey": "R6S · BANK · SETUP PLANNER", "h1": "银行 · 防守装修规划器",
+     "title": "彩虹六号 · 银行防守装修规划器"},
 ]
 
 def floor_btns(d):

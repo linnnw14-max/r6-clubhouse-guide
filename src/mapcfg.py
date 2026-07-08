@@ -1,0 +1,47 @@
+# -*- coding: utf-8 -*-
+# 各地图配置: 楼层(r6calls号)/中文名/房间中文对照/包点/包点选择器
+# 房间条目: (r6calls名, 中文, 英文, kind, k, 色型)  色型 gold(目标)/corr(走廊楼梯)/room/ext(室外)
+MAPCFG = {}
+
+MAPCFG["bank"] = {
+ "mapcn":"银行","mapen":"Bank",
+ "order":["3","2","1","0"], "default":"1",
+ "names":{"3":"屋顶","2":"二楼","1":"一楼","0":"地下室"},
+ "en":{"3":"ROOF","2":"2F","1":"1F","0":"B"},
+ "notes":{"3":"屋顶层 · 室外","2":"CEO办公室 + 高管室","1":"柜员 + 档案 + 开放区","0":"金库 + 储物间 + 监控"},
+ "sites":[{"id":"1","f":"2","n":"① CEO·高管"},{"id":"2","f":"1","n":"② 开放区·厨房"},
+          {"id":"3","f":"1","n":"③ 柜员·档案"},{"id":"4","f":"0","n":"④ 储物间·监控"}],
+ "bombs":{"2":["1A","1B"],"1":["2A","2B","3A","3B"],"0":["4A","4B"]},
+ "rooms":{
+  "0":[("Lockers","储物间","Lockers","目标","obj","gold"),("CCTV","监控室","CCTV","目标","obj","gold"),
+       ("Vault","金库","Vault","","room","room"),("Gold","黄金库","Gold","","room","room"),
+       ("Cash","现金库","Cash","","room","room"),("Vault Entrance","金库入口","Vault Ent.","","room","room"),
+       ("Vault Lobby","金库大厅","Vault Lobby","","room","room"),("Lockers Hallway","储物间走廊","Lockers Hall","","room","corr"),
+       ("Red Hallway","红色走廊","Red Hallway","","room","corr"),("Server","服务器室","Server","","room","room"),
+       ("Tunnel","隧道","Tunnel","","room","room"),("Garage","车库","Garage","","room","room"),
+       ("Red Truck","红卡车","Red Truck","","room","room"),("Dock","装卸区","Dock","","room","room"),
+       ("Main Stairs","主楼梯","Main Stairs","","room","corr"),("Blue Stairs","蓝楼梯","Blue Stairs","","room","corr"),
+       ("Elevators","电梯","Elevators","","room","corr")],
+  "1":[("Tellers","柜员区","Tellers","目标","obj","gold"),("Archives","档案室","Archives","目标","obj","gold"),
+       ("Open Space","开放区","Open Space","目标","obj","gold"),("Kitchen","厨房","Kitchen","目标","obj","gold"),
+       ("Tellers Office","柜员办公室","Tellers Office","","room","room"),("Lobby","大堂","Lobby","","room","room"),
+       ("Admin","行政室","Admin","","room","room"),("Loan","贷款室","Loan","","room","room"),
+       ("Electrical","电气室","Electrical","","room","room"),("Square","广场厅","Square","","room","room"),
+       ("Printer","打印室","Printer","","room","room"),("ATMs","取款机厅","ATMs","","room","room"),
+       ("Open Space Hallway","开放区走廊","O.S.Hallway","","room","corr"),("Lobby Stairs","大堂楼梯","Lobby Stairs","","room","corr"),
+       ("Square Stairs","广场楼梯","Square Stairs","","room","corr"),("Main Stairs","主楼梯","Main Stairs","","room","corr"),
+       ("Elevators","电梯","Elevators","","room","corr"),("Garage Roof","车库顶","Garage Roof","室外","ext","ext")],
+  "2":[("CEO","CEO办公室","CEO","目标","obj","gold"),("Exec","高管室","Exec","目标","obj","gold"),
+       ("Front Desk","前台","Front Desk","","room","room"),("Meeting","会议室","Meeting","","room","room"),
+       ("Stock","证券室","Stock","","room","room"),("Top Square","广场上层","Top Square","","room","room"),
+       ("Janitor","清洁间","Janitor","","room","room"),("Banana","香蕉拐角","Banana","","room","room"),
+       ("Lobby","大堂","Lobby","","room","room"),("Loan","贷款室","Loan","","room","room"),
+       ("ATMs","取款机厅","ATMs","","room","room"),("Exec Hallway","高管走廊","Exec Hall","","room","corr"),
+       ("Meeting Hallway","会议室走廊","Meeting Hall","","room","corr"),("Stock Hallway","证券室走廊","Stock Hall","","room","corr"),
+       ("Lobby Stairs","大堂楼梯","Lobby Stairs","","room","corr"),("Square Stairs","广场楼梯","Square Stairs","","room","corr"),
+       ("Main Stairs","主楼梯","Main Stairs","","room","corr"),("Elevators","电梯","Elevators","","room","corr"),
+       ("Terrace","露台","Terrace","室外","ext","ext"),("Garage Roof","车库顶","Garage Roof","室外","ext","ext")],
+  "3":[("High Roof","高屋顶","High Roof","室外","ext","ext"),("Low Roof","低屋顶","Low Roof","室外","ext","ext"),
+       ("Terrace","露台","Terrace","室外","ext","ext"),("Garage Roof","车库顶","Garage Roof","室外","ext","ext")],
+ },
+}
