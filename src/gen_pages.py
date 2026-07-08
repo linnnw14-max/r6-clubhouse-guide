@@ -236,58 +236,67 @@ RANKED = {"club", "kafe", "bank", "border", "chalet", "coastline", "consulate",
           "oregon", "skyscraper", "labs", "lair", "themepark", "emerald", "villa"}
 
 def card_html(m):
+    nfl = m["floors"].count("/") + 1
     return '''    <a class="mcard" href="%s">
-      <div class="mcov" style="background-image:url('data:image/webp;base64,%s')"></div>
+      <div class="mcov" style="background-image:url('data:image/webp;base64,%s')"><span class="mchip">%d 层</span></div>
       <div class="minfo">
         <div class="mtitle">%s <span class="men">%s</span></div>
         <div class="mdesc">%s</div>
         <div class="mmeta"><span class="mfl">%s</span><span class="mgo">打开规划器 →</span></div>
       </div>
     </a>
-''' % (m["out"], b64(D + m["cover"]), m["mapcn"], m["mapen"], m["desc"], m["floors"])
+''' % (m["out"], b64(D + m["cover"]), nfl, m["mapcn"], m["mapen"], m["desc"], m["floors"])
 
 ranked_maps = [m for m in MAPS if m["id"] in RANKED]
 casual_maps = [m for m in MAPS if m["id"] not in RANKED]
 
-def section(title_cn, title_en, note, maps):
+def section(cls, title_cn, title_en, note, maps):
     if not maps: return ""
-    return ('''  <div class="poolhead"><h2>%s <span class="poolen">%s</span></h2><span class="poolcnt">%d 张</span></div>
+    return ('''  <div class="poolhead %s"><span class="pbar"></span><h2>%s <span class="poolen">%s</span></h2><span class="poolcnt">%d 张</span></div>
   <p class="poolnote">%s</p>
   <div class="mgrid">
-''' % (title_cn, title_en, len(maps), note)) + "".join(card_html(m) for m in maps) + '''  </div>
+''' % (cls, title_cn, title_en, len(maps), note)) + "".join(card_html(m) for m in maps) + '''  </div>
 '''
 
-sections = section("排位地图池", "RANKED POOL", "当前排位/竞技轮换的地图", ranked_maps) \
-         + section("非排位 · 休闲", "CASUAL", "仅休闲/快速匹配的地图", casual_maps)
+sections = section("ranked", "排位地图池", "RANKED POOL", "当前排位 / 竞技轮换的地图", ranked_maps) \
+         + section("casual", "非排位 · 休闲", "CASUAL", "仅休闲 / 快速匹配的地图", casual_maps)
 
 home_html = '''<meta charset="utf-8">
 <title>彩虹六号 · 防守装修规划器</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
 ''' + css + '''
-.home-wrap{max-width:1060px;margin:0 auto;padding:48px 22px 60px}
-.home-head{text-align:center;margin-bottom:38px}
+.home-wrap{max-width:1120px;margin:0 auto;padding:44px 22px 64px}
+.home-head{text-align:center;margin-bottom:8px}
 .home-head .ey{font-family:var(--font-mono);font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:var(--amber);font-weight:600}
-.home-head h1{font-size:34px;margin:12px 0 8px;font-weight:800;letter-spacing:.01em}
-.home-head p{font-size:15px;color:var(--ink-dim);margin:0}
-.poolhead{display:flex;align-items:baseline;gap:12px;margin:34px 0 2px;padding-bottom:8px;border-bottom:1px solid var(--line)}
-.poolhead:first-of-type{margin-top:8px}
+.home-head h1{font-size:34px;margin:12px 0 10px;font-weight:800;letter-spacing:.01em}
+.home-head p{font-size:15px;color:var(--ink-dim);margin:0 auto;max-width:660px;line-height:1.6}
+.hero-stats{display:flex;align-items:center;justify-content:center;gap:16px;margin:22px 0 2px;font-size:13px;color:var(--ink-dim)}
+.hero-stats b{font-family:var(--font-mono);font-size:17px;font-weight:800;color:var(--ink);margin-right:5px}
+.hero-stats i{width:1px;height:15px;background:var(--line2)}
+.poolhead{display:flex;align-items:center;gap:11px;margin:38px 0 2px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.poolhead .pbar{width:4px;height:19px;border-radius:2px;background:var(--amber);flex:0 0 auto}
+.poolhead.casual .pbar{background:var(--angle)}
 .poolhead h2{font-size:20px;font-weight:800;margin:0}
 .poolhead .poolen{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--amber);margin-left:6px}
+.poolhead.casual .poolen{color:var(--angle)}
 .poolhead .poolcnt{margin-left:auto;font-size:12px;color:var(--ink-faint);font-family:var(--font-mono)}
-.poolnote{font-size:12.5px;color:var(--ink-faint);margin:8px 0 16px}
-.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px}
+.poolnote{font-size:12.5px;color:var(--ink-faint);margin:9px 0 17px}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(324px,1fr));gap:20px}
 .mcard{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .16s,border-color .16s,box-shadow .16s}
 .mcard:hover{transform:translateY(-4px);border-color:var(--amber);box-shadow:0 14px 34px rgba(0,0,0,.5)}
-.mcov{aspect-ratio:16/10;background-size:cover;background-position:center;border-bottom:1px solid var(--line)}
-.minfo{padding:14px 16px 16px}
+.mcov{position:relative;aspect-ratio:16/10;background-size:cover;background-position:center;border-bottom:1px solid var(--line)}
+.mcov::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,15,20,0) 58%%,rgba(11,15,20,.5))}
+.mchip{position:absolute;top:10px;left:10px;z-index:1;font-family:var(--font-mono);font-size:10.5px;font-weight:700;color:var(--ink);background:rgba(10,14,19,.68);border:1px solid var(--line2);border-radius:6px;padding:3px 8px;backdrop-filter:blur(3px)}
+.minfo{padding:14px 16px 15px}
 .mtitle{font-size:19px;font-weight:800}
 .mtitle .men{font-family:var(--font-mono);font-size:11px;font-weight:500;color:var(--ink-faint);letter-spacing:.06em;margin-left:6px}
 .mdesc{font-size:13px;color:var(--ink-dim);margin:6px 0 12px;line-height:1.5}
-.mmeta{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.mmeta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:11px;border-top:1px solid var(--line)}
 .mfl{font-size:11px;color:var(--ink-faint);font-family:var(--font-mono)}
 .mgo{font-size:13px;font-weight:700;color:var(--amber)}
-.home-foot{text-align:center;margin-top:40px;font-size:12px;color:var(--ink-faint);line-height:1.7}
+.mcard:hover .mgo{text-decoration:underline}
+.home-foot{text-align:center;margin-top:44px;font-size:12px;color:var(--ink-faint);line-height:1.7}
 .home-foot a{color:var(--ink-dim)}
 </style>
 
@@ -296,8 +305,9 @@ home_html = '''<meta charset="utf-8">
     <span class="ey">R6S · SETUP PLANNER</span>
     <h1>彩虹六号 · 防守装修规划器</h1>
     <p>选一张地图开始规划：现役官方地图 · 强化墙 / 打洞 / 全防守道具摆放 · 一键导出方案图</p>
+    <div class="hero-stats"><span><b>%d</b>张地图</span><i></i><span><b>%d</b>排位</span><i></i><span><b>%d</b>休闲</span></div>
   </div>
-''' + sections + '''  <div class="home-foot">
+''' % (len(MAPS), len(ranked_maps), len(casual_maps)) + sections + '''  <div class="home-foot">
     地图与结构数据取自 r6calls.com · 素材版权归 Ubisoft Entertainment · 个人非商业粉丝项目<br>
     <a href="https://github.com/linnnw14-max/r6-clubhouse-guide">GitHub 源码</a>
   </div>
