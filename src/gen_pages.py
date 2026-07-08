@@ -30,6 +30,14 @@ MAPS = [
      "cover": "cover_oregon.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "儿童房 + 主卧 + 塔楼多点攻防",
      "ey": "R6S · OREGON · SETUP PLANNER", "h1": "俄勒冈 · 防守装修规划器",
      "title": "彩虹六号 · 俄勒冈防守装修规划器"},
+    {"id": "border", "data": "data_border.json", "refpat": "ref_border_%s.webp", "out": "border.html", "mapcn": "边境", "mapen": "Border",
+     "cover": "cover_border.webp", "floors": "屋顶 / 二楼 / 一楼", "desc": "海关 + 军械库口岸攻防",
+     "ey": "R6S · BORDER · SETUP PLANNER", "h1": "边境 · 防守装修规划器",
+     "title": "彩虹六号 · 边境防守装修规划器"},
+    {"id": "coastline", "data": "data_coastline.json", "refpat": "ref_coastline_%s.webp", "out": "coastline.html", "mapcn": "海岸线", "mapen": "Coastline",
+     "cover": "cover_coastline.webp", "floors": "屋顶 / 二楼 / 一楼", "desc": "水烟房 + 顶层套房度假村攻防",
+     "ey": "R6S · COASTLINE · SETUP PLANNER", "h1": "海岸线 · 防守装修规划器",
+     "title": "彩虹六号 · 海岸线防守装修规划器"},
 ]
 
 def floor_btns(d):
