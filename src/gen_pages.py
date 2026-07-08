@@ -38,6 +38,10 @@ MAPS = [
      "cover": "cover_coastline.webp", "floors": "屋顶 / 二楼 / 一楼", "desc": "水烟房 + 顶层套房度假村攻防",
      "ey": "R6S · COASTLINE · SETUP PLANNER", "h1": "海岸线 · 防守装修规划器",
      "title": "彩虹六号 · 海岸线防守装修规划器"},
+    {"id": "consulate", "data": "data_consulate.json", "refpat": "ref_consulate_%s.webp", "out": "consulate.html", "mapcn": "领事馆", "mapen": "Consulate",
+     "cover": "cover_consulate.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "领事办公室 + 车库多层攻防",
+     "ey": "R6S · CONSULATE · SETUP PLANNER", "h1": "领事馆 · 防守装修规划器",
+     "title": "彩虹六号 · 领事馆防守装修规划器"},
 ]
 
 def floor_btns(d):

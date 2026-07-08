@@ -1,0 +1,6 @@
+{
+"F0":[["4B",234,520],["4A",495,542],["3B",876,578],["Construction",602,655],["Delivery",86,494],["Garage",232,563],["Coffee",638,437],["CCTV",493,443],["Kitchen",433,591],["Banana",498,180],["Lockers",515,382],["Electrical",916,318],["Storage",637,530],["Servers",793,513],["ServerHallway",882,647],["Pillar",296,521]],
+"F1":[["2B",401,593],["2A",138,611],["3A",612,493],["Piano",256,543],["Lounge",504,529],["Statue",503,303],["Expo",369,515],["Tellers Hallway",670,397],["Tellers",675,447],["Visa",851,522],["Emergency",862,309],["Closet",182,655],["Lobby",505,663],["Visa Entrance",874,627],["Gumball",780,373],["Piano Hallway",344,380],["Visa Hallway",709,664],["Yellow Stairs",199,256]],
+"F2":[["1A",577,598],["1B",198,683],["Break Hallway",637,541],["Meeting Hallway",522,493],["Consule Hallway",196,385],["ManagerHallway",695,671],["Balcony",513,765],["Catering",496,690],["Copy",743,388],["Soda",638,426],["CEO Side",175,468],["Break",762,539],["Admin",939,507],["Front Office",790,604],["Meeting",488,553],["Long Desk",518,386],["Secretary",328,451],["Bathroom",325,390],["CEO",243,598]],
+"F3":[["Emergency Roof",872,294],["Garage Roof",58,564]]
+}
