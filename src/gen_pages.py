@@ -85,6 +85,26 @@ MAPS = [
     {"id": "stadiumbravo", "data": "data_stadiumbravo.json", "refpat": "ref_stadiumbravo_%s.webp", "out": "stadiumbravo.html", "mapcn": "体育场", "mapen": "Stadium Bravo",
      "cover": "cover_stadiumbravo.webp", "floors": "二楼 / 一楼", "desc": "军械库 + 顶层套房融合竞技场攻防",
      "ey": "R6S · STADIUM BRAVO · SETUP PLANNER", "h1": "体育场 · 防守装修规划器", "title": "彩虹六号 · 体育场防守装修规划器"},
+    {"id": "house", "data": "data_house.json", "refpat": "ref_house_%s.webp", "out": "house.html", "mapcn": "小屋", "mapen": "House",
+     "cover": "cover_house.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "主卧 + 粉色儿童房 + 车库经典民居",
+     "ey": "R6S · HOUSE · SETUP PLANNER", "h1": "小屋 · 防守装修规划器",
+     "title": "彩虹六号 · 小屋防守装修规划器"},
+    {"id": "hereford", "data": "data_hereford.json", "refpat": "ref_hereford_%s.webp", "out": "hereford.html", "mapcn": "赫里福德基地", "mapen": "Hereford Base",
+     "cover": "cover_hereford.webp", "floors": "屋顶 / 阁楼 / 三楼 / 二楼 / 一楼", "desc": "酿造室 + 阁楼 + 靶场训练基地老图",
+     "ey": "R6S · HEREFORD BASE · SETUP PLANNER", "h1": "赫里福德基地 · 防守装修规划器",
+     "title": "彩虹六号 · 赫里福德基地防守装修规划器"},
+    {"id": "plane", "data": "data_plane.json", "refpat": "ref_plane_%s.webp", "out": "plane.html", "mapcn": "总统专机", "mapen": "Presidential Plane",
+     "cover": "cover_plane.webp", "floors": "屋顶 / 上层 / 主客舱 / 货舱层", "desc": "会议室 + 货舱 + 驾驶舱三层专机",
+     "ey": "R6S · PRESIDENTIAL PLANE · SETUP PLANNER", "h1": "总统专机 · 防守装修规划器",
+     "title": "彩虹六号 · 总统专机防守装修规划器"},
+    {"id": "yacht", "data": "data_yacht.json", "refpat": "ref_yacht_%s.webp", "out": "yacht.html", "mapcn": "游艇", "mapen": "Yacht",
+     "cover": "cover_yacht.webp", "floors": "屋顶 / 顶层甲板 / 上层甲板 / 中层甲板 / 引擎甲板", "desc": "赌场 + 引擎室 + 驾驶舱破冰游艇",
+     "ey": "R6S · YACHT · SETUP PLANNER", "h1": "游艇 · 防守装修规划器",
+     "title": "彩虹六号 · 游艇防守装修规划器"},
+    {"id": "tower", "data": "data_tower.json", "refpat": "ref_tower_%s.webp", "out": "tower.html", "mapcn": "高塔", "mapen": "Tower",
+     "cover": "cover_tower.webp", "floors": "屋顶 / 顶层 / 夹层 / 二楼 / 一楼", "desc": "餐厅 + 画廊 + 旋转观光塔",
+     "ey": "R6S · TOWER · SETUP PLANNER", "h1": "高塔 · 防守装修规划器",
+     "title": "彩虹六号 · 高塔防守装修规划器"},
 ]
 
 def floor_btns(d):
@@ -230,14 +250,16 @@ for m in MAPS:
     io.open(p, "w", encoding="utf-8").write(html)
     print("->", p, len(html) // 1024, "KB")
 
-# ---------- 主页（地图封面画廊，分排位/非排位池） ----------
-# 排位地图池（可编辑；不在此集合的都算非排位/休闲）
+# ---------- 主页（地图封面画廊，分排位 / 非排位 / 快速匹配三池） ----------
+# 排位地图池（可编辑；轮换变了改这里）
 RANKED = {"club", "kafe", "bank", "border", "chalet", "coastline", "consulate",
           "oregon", "skyscraper", "labs", "lair", "themepark", "emerald", "villa"}
+# 快速匹配经典老图（不进标准 / 排位，仅快速匹配保留）
+QUICK = {"house", "hereford", "plane", "yacht", "tower"}
 
-def card_html(m):
+def card_html(m, cls):
     nfl = m["floors"].count("/") + 1
-    return '''    <a class="mcard" href="%s">
+    return '''    <a class="mcard %s" href="%s">
       <div class="mcov" style="background-image:url('data:image/webp;base64,%s')"><span class="mchip">%d 层</span></div>
       <div class="minfo">
         <div class="mtitle">%s <span class="men">%s</span></div>
@@ -245,21 +267,23 @@ def card_html(m):
         <div class="mmeta"><span class="mfl">%s</span><span class="mgo">打开规划器 →</span></div>
       </div>
     </a>
-''' % (m["out"], b64(D + m["cover"]), nfl, m["mapcn"], m["mapen"], m["desc"], m["floors"])
+''' % (cls, m["out"], b64(D + m["cover"]), nfl, m["mapcn"], m["mapen"], m["desc"], m["floors"])
 
 ranked_maps = [m for m in MAPS if m["id"] in RANKED]
-casual_maps = [m for m in MAPS if m["id"] not in RANKED]
+quick_maps  = [m for m in MAPS if m["id"] in QUICK]
+std_maps    = [m for m in MAPS if m["id"] not in RANKED and m["id"] not in QUICK]
 
 def section(cls, title_cn, title_en, note, maps):
     if not maps: return ""
     return ('''  <div class="poolhead %s"><span class="pbar"></span><h2>%s <span class="poolen">%s</span></h2><span class="poolcnt">%d 张</span></div>
   <p class="poolnote">%s</p>
   <div class="mgrid">
-''' % (cls, title_cn, title_en, len(maps), note)) + "".join(card_html(m) for m in maps) + '''  </div>
+''' % (cls, title_cn, title_en, len(maps), note)) + "".join(card_html(m, cls) for m in maps) + '''  </div>
 '''
 
 sections = section("ranked", "排位地图池", "RANKED POOL", "当前排位 / 竞技轮换的地图", ranked_maps) \
-         + section("casual", "非排位 · 休闲", "CASUAL", "仅休闲 / 快速匹配的地图", casual_maps)
+         + section("casual", "非排位 · 标准图", "STANDARD", "在标准 / 快速匹配里，但不进当前排位轮换", std_maps) \
+         + section("quick", "快速匹配 · 经典老图", "QUICK MATCH", "退出标准竞技、仅快速匹配保留的经典地图", quick_maps)
 
 home_html = '''<meta charset="utf-8">
 <title>彩虹六号 · 防守装修规划器</title>
@@ -274,17 +298,29 @@ home_html = '''<meta charset="utf-8">
 .hero-stats{display:flex;align-items:center;justify-content:center;gap:16px;margin:22px 0 2px;font-size:13px;color:var(--ink-dim)}
 .hero-stats b{font-family:var(--font-mono);font-size:17px;font-weight:800;color:var(--ink);margin-right:5px}
 .hero-stats i{width:1px;height:15px;background:var(--line2)}
-.poolhead{display:flex;align-items:center;gap:11px;margin:38px 0 2px;padding-bottom:9px;border-bottom:1px solid var(--line)}
+.hero-stats .s-rk b{color:var(--amber)}
+.hero-stats .s-st b{color:var(--angle)}
+.hero-stats .s-qk b{color:var(--roam)}
+.poolhead{display:flex;align-items:center;gap:11px;margin:40px 0 2px;padding-bottom:9px;border-bottom:1px solid var(--line)}
 .poolhead .pbar{width:4px;height:19px;border-radius:2px;background:var(--amber);flex:0 0 auto}
 .poolhead.casual .pbar{background:var(--angle)}
+.poolhead.quick .pbar{background:var(--roam)}
 .poolhead h2{font-size:20px;font-weight:800;margin:0}
 .poolhead .poolen{font-family:var(--font-mono);font-size:11px;letter-spacing:.18em;color:var(--amber);margin-left:6px}
 .poolhead.casual .poolen{color:var(--angle)}
+.poolhead.quick .poolen{color:var(--roam)}
 .poolhead .poolcnt{margin-left:auto;font-size:12px;color:var(--ink-faint);font-family:var(--font-mono)}
 .poolnote{font-size:12.5px;color:var(--ink-faint);margin:9px 0 17px}
-.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(324px,1fr));gap:20px}
-.mcard{display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .16s,border-color .16s,box-shadow .16s}
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.mcard{position:relative;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden;text-decoration:none;color:inherit;transition:transform .16s,border-color .16s,box-shadow .16s}
+.mcard::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;z-index:2;background:var(--amber);opacity:.9}
+.mcard.casual::before{background:var(--angle)}
+.mcard.quick::before{background:var(--roam)}
 .mcard:hover{transform:translateY(-4px);border-color:var(--amber);box-shadow:0 14px 34px rgba(0,0,0,.5)}
+.mcard.casual:hover{border-color:var(--angle)}
+.mcard.quick:hover{border-color:var(--roam)}
+.mcard.casual .mgo{color:var(--angle)}
+.mcard.quick .mgo{color:var(--roam)}
 .mcov{position:relative;aspect-ratio:16/10;background-size:cover;background-position:center;border-bottom:1px solid var(--line)}
 .mcov::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(11,15,20,0) 58%%,rgba(11,15,20,.5))}
 .mchip{position:absolute;top:10px;left:10px;z-index:1;font-family:var(--font-mono);font-size:10.5px;font-weight:700;color:var(--ink);background:rgba(10,14,19,.68);border:1px solid var(--line2);border-radius:6px;padding:3px 8px;backdrop-filter:blur(3px)}
@@ -305,9 +341,9 @@ home_html = '''<meta charset="utf-8">
     <span class="ey">R6S · SETUP PLANNER</span>
     <h1>彩虹六号 · 防守装修规划器</h1>
     <p>选一张地图开始规划：现役官方地图 · 强化墙 / 打洞 / 全防守道具摆放 · 一键导出方案图</p>
-    <div class="hero-stats"><span><b>%d</b>张地图</span><i></i><span><b>%d</b>排位</span><i></i><span><b>%d</b>休闲</span></div>
+    <div class="hero-stats"><span><b>%d</b>张地图</span><i></i><span class="s-rk"><b>%d</b>排位</span><i></i><span class="s-st"><b>%d</b>非排位</span><i></i><span class="s-qk"><b>%d</b>经典</span></div>
   </div>
-''' % (len(MAPS), len(ranked_maps), len(casual_maps)) + sections + '''  <div class="home-foot">
+''' % (len(MAPS), len(ranked_maps), len(std_maps), len(quick_maps)) + sections + '''  <div class="home-foot">
     地图与结构数据取自 r6calls.com · 素材版权归 Ubisoft Entertainment · 个人非商业粉丝项目<br>
     <a href="https://github.com/linnnw14-max/r6-clubhouse-guide">GitHub 源码</a>
   </div>
