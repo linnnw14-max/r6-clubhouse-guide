@@ -14,6 +14,10 @@ def b64(p): return base64.b64encode(open(p, "rb").read()).decode()
 
 # 地图清单（顺序=切换器里的顺序）
 MAPS = [
+    {"id": "casino", "data": "data_casino.json", "refpat": "ref_casino_%s.webp", "out": "casino.html", "mapcn": "卡吕普索赌场", "mapen": "Calypso Casino",
+     "cover": "cover_casino.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "Y11S2 新图 · 轮盘厅 + 金库 + 泳池",
+     "ey": "R6S · CALYPSO CASINO · SETUP PLANNER", "h1": "卡吕普索赌场 · 防守装修规划器",
+     "title": "彩虹六号 · 卡吕普索赌场防守装修规划器"},
     {"id": "club", "data": "data.json",      "refpat": "ref_%s.webp",      "out": "club.html", "mapcn": "会所", "mapen": "Clubhouse",
      "cover": "cover_club.webp", "floors": "屋顶 / 二楼 / 一楼 / 地下室", "desc": "监控室 + 金库经典防守点",
      "ey": "R6S · CLUBHOUSE · SETUP PLANNER", "h1": "会所 · 防守装修规划器",
@@ -252,8 +256,9 @@ for m in MAPS:
 
 # ---------- 主页（地图封面画廊，分排位 / 非排位 / 快速匹配三池） ----------
 # 排位地图池（可编辑；轮换变了改这里）
+# Y11S2 起：卡吕普索赌场/堡垒/内陆 进排位；别墅/摩天/主题公园/运河 退出排位
 RANKED = {"club", "kafe", "bank", "border", "chalet", "coastline", "consulate",
-          "oregon", "skyscraper", "labs", "lair", "themepark", "emerald", "villa"}
+          "oregon", "labs", "lair", "emerald", "fortress", "outback", "casino"}
 # 快速匹配经典老图（不进标准 / 排位，仅快速匹配保留）
 QUICK = {"house", "hereford", "plane", "yacht", "tower"}
 
